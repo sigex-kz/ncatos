@@ -86,6 +86,12 @@ type metrics struct {
 
 	// Вектор счетчиков ошибок, разделенный по протоколу и типу
 	responseErrors *prometheus.CounterVec
+
+	// Вектор для индикации информации о сборке
+	buildInfo *prometheus.GaugeVec
+
+	// Вектор для индикации информации о конфигурации
+	configInfo *prometheus.GaugeVec
 }
 
 // newMetrics создает новый объект с метриками и регистрирует их в переданном реестре.
@@ -124,6 +130,24 @@ func newMetrics(registry *prometheus.Registry) *metrics {
 		[]string{"protocol", "errorType"},
 	)
 
+	out.buildInfo = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "ncatos",
+			Name:      "build_info",
+			Help:      "Indicate build info of the current running app.",
+		},
+		[]string{"version", "timestamp"},
+	)
+
+	out.configInfo = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "ncatos",
+			Name:      "config_info",
+			Help:      "Indicate loaded config info.",
+		},
+		[]string{"hash"},
+	)
+
 	// обратимся к зарегистрированным элемента векторов - таким образом зададим их нулевое значение
 	out.requestProcessingTimes.WithLabelValues(string(protoOCSP))
 	out.responseErrors.WithLabelValues(string(protoOCSP), string(responseErrorNet))
@@ -136,6 +160,11 @@ func newMetrics(registry *prometheus.Registry) *metrics {
 	out.responseErrors.WithLabelValues(string(protoTSP), string(responseErrorHTTP))
 	out.responseErrors.WithLabelValues(string(protoTSP), string(responseErrorAsn))
 	out.responseErrors.WithLabelValues(string(protoTSP), string(responseErrorContents))
+
+	out.buildInfo.WithLabelValues(AppVersion, BuildTimeStamp).Add(1)
+
+	out.buildInfo.WithLabelValues(ConfigHash).Add(1)
+
 	return out
 }
 

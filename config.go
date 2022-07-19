@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"flag"
 	"fmt"
 	"os"
@@ -43,6 +44,9 @@ func buildConfig() (*appConfig, error) {
 		if decodeError := yamlDecoder.Decode(&out); decodeError != nil {
 			return nil, fmt.Errorf("failed to parse config file: [%s], [%w]", fn, decodeError)
 		}
+
+		configHashBytes := sha256.Sum256(jcEncoded)
+		ConfigHash = fmt.Sprintf("%x", configHashBytes)
 	}
 
 	// установим параметры по умолчанию

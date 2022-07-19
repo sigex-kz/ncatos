@@ -15,6 +15,20 @@ import (
 )
 
 var (
+	// AppVersion содержит версию приложения.
+	// Устанавливается с помощью -ldflags "-X main.AppVersion=1.0.0"
+	AppVersion string
+	// BuildTimeStamp содаржит метку времени сборки
+	// Устанавливается с помощью -ldflags "-X 'main.BuildTimeStamp=$(date)'"
+	BuildTimeStamp string
+)
+
+var (
+	// ConfigHash содержит хеш конфигурационного файла.
+	ConfigHash string
+)
+
+var (
 	// Eдинственный экземпляр контекста приложения
 	// Cоздается и изменяется только при запуске приложения в main(!).
 	// В остальных местах обращение к контексту следует выполнять вызовом getAppContext().
