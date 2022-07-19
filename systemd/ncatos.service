@@ -5,7 +5,7 @@ Description=Ncatos
 Type=simple
 User=root
 WorkingDirectory=/opt/ncatos/
-ExecStart=/opt/ncatos/ncatos -config /opt/ncatos/config.yml
+ExecStart=/opt/ncatos/ncatos -config /opt/ncatos/config/config.yml
 Restart=on-failure
 
 [Install]

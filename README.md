@@ -12,9 +12,10 @@
 ```
 mkdir /opt/ncatos
 cd /opt/ncatos
-wget ...
-unzip ...
-ln -s /opt/ncatos/ncatos.service /etc/systemd/system/
+wget https://github.com/sigex-kz/ncatos/releases/latest/download/ncatos-build.zip
+unzip ncatos-build.zip
+chmod +x ncatos
+ln -s /opt/ncatos/systemd/ncatos.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable ncatos
 service ncatos start
