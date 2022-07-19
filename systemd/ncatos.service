@@ -1,0 +1,12 @@
+[Unit]
+Description=Ncatos
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ncatos/
+ExecStart=/opt/ncatos/ncatos -config /opt/ncatos/config.yml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,169 @@
+# настройки протоколирования
+log:
+  # флаг позволяет включить ведение протокола
+  enabled: true
+
+  # флаг позволяет включить ведение протокола в консоль
+  console: true
+
+  # имя файла в который следует вести протокол. Если строка не установлена, то
+  # протоколирование в файл не ведется.
+  # Файл протокола открывается в режиме append.
+  # Данный параметр следует использовать осторожно, т.к. не отслеживается размер
+  # файла, не выполняется ротация и т.д.
+  filename: ""
+
+  # флаг позволяет включить в вывод сообщений доп. информацию.
+  # В частности ответы и запросы
+  verbose: false
+
+
+# настройки предоставления метрик по http
+metrics:
+  # флаг позволяет включить предоставление метрик по адресу в address
+  enabled: true
+
+  # Address по которому будут предоставляться метрики.
+  # Поле указывается в формате "host:port". Метрики не собираются, если в
+  # поле указана пустая строка.
+  # Если адрес не пуст, то статистика доступна по пути address/metrics
+  address: :9001
+
+
+# Cекция определяет настройки взаимодействия с сервером OCSP.
+ocsp:
+  # Флаг позволяет отключить опрос OCSP сервера (true)
+  disabled: false
+
+  # URL OCSP сервера
+  url: http://ocsp.pki.gov.kz
+
+  # Таймаут обработки сетевого запроса.
+  # Пустая строка - нет таймаута.
+  # Поддерживаются следующие суффиксы: ms (миллисекунды), s (секунды), m (минуты), h (часы).
+  timeout: 10s
+
+  # OID алгоритма хеширования, использованного для вычисления значений полей
+  # namedigest, keydigest (компонентов OCSP CertID)
+  digestoid: 2.16.840.1.101.3.4.2.1
+
+  # Значение хеша имени издателя сертификата в поле cert, закодированное в base64.
+  # Поле является составной частью OCSP CertID.
+  namedigest: YeCe0iWan8xz3Kk1WPnkrdE6Uc5c4FEj4pKTr5oqxlg=
+
+  # Значение хеша открытого ключа издателя сертификата в поле cert, закодированное в base64.
+  # Поле является составной частью OCSP CertID.
+  keydigest: Ic4TAska3Kh5EXv9nTsJUcRD5h6yJALl3BJzaIpqrso=
+
+  # Сертификат, чей статус необходимо получить.
+  # Представляет собой X509 сертификат в ASN.1 DER, упакованный в base64.
+  cert: |-
+    MIIGWjCCBEKgAwIBAgIUPZ3lbV8nnF0G7H2Lg6pQvetDfTQwDQYJKoZIhvcNAQELBQAwUjEL
+    MAkGA1UEBhMCS1oxQzBBBgNVBAMMOtKw0JvQotCi0KvSmiDQmtCj05jQm9CQ0J3QlNCr0KDQ
+    o9Co0Ksg0J7QoNCi0JDQm9Cr0pogKFJTQSkwHhcNMTkxMjEyMDUyMjA1WhcNMjIxMjExMDUy
+    MjA1WjCCARIxFDASBgNVBAMMC1RTQSBTRVJWSUNFMRgwFgYDVQQFEw9JSU43NjEyMzEzMDAz
+    MTMxCzAJBgNVBAYTAktaMRwwGgYDVQQHDBPQndCj0KAt0KHQo9Cb0KLQkNCdMRwwGgYDVQQI
+    DBPQndCj0KAt0KHQo9Cb0KLQkNCdMX0wewYDVQQKDHTQkNCa0KbQmNCe0J3QldCg0J3QntCV
+    INCe0JHQqdCV0KHQotCS0J4gItCd0JDQptCY0J7QndCQ0JvQrNCd0KvQlSDQmNCd0KTQntCg
+    0JzQkNCm0JjQntCd0J3Qq9CVINCi0JXQpdCd0J7Qm9Ce0JPQmNCYIjEYMBYGA1UECwwPQklO
+    MDAwNzQwMDAwNzI4MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi4V+lIKjm56c
+    jwKf3bfiGkby5BmdEwFPZDCud0lrEgAcAwRD1PezGLYpYMvaYkCuZWzjyB2GGSb0lFVAKdgZ
+    v45n6eZ49p5TzbqdrBLzc5WUmCAjFu0ATjF2vyfaMIoyqNiBpCNe2WUgLc1Xku+dkV5qjL+d
+    2KH6jeI1uJJ8ShaxfXEHwxbtkcipkGcdg5CeelJb1NF6NgXgH4ULhKvvQhcVFge6Jw0lmjhX
+    2KMaJpwEDdZY4hPE493RNlx3ngbiQ0VJLOhwaKowtW1YY1YErNG2rEc8p2+grYzehnkiGrON
+    /RGe5LfQdJCxfMa1gTV3tvvL5Hl+v6lZ1+ncLYQJ1QIDAQABo4IBZDCCAWAwFgYDVR0lAQH/
+    BAwwCgYIKwYBBQUHAwgwDwYDVR0jBAgwBoAEW2p0ETAdBgNVHQ4EFgQUWqtFsZfeTcUqiTnM
+    f8DZFRctMp8wVgYDVR0fBE8wTTBLoEmgR4YhaHR0cDovL2NybC5wa2kuZ292Lmt6L25jYV9y
+    c2EuY3JshiJodHRwOi8vY3JsMS5wa2kuZ292Lmt6L25jYV9yc2EuY3JsMFoGA1UdLgRTMFEw
+    T6BNoEuGI2h0dHA6Ly9jcmwucGtpLmdvdi5rei9uY2FfZF9yc2EuY3JshiRodHRwOi8vY3Js
+    MS5wa2kuZ292Lmt6L25jYV9kX3JzYS5jcmwwYgYIKwYBBQUHAQEEVjBUMC4GCCsGAQUFBzAC
+    hiJodHRwOi8vcGtpLmdvdi5rei9jZXJ0L25jYV9yc2EuY2VyMCIGCCsGAQUFBzABhhZodHRw
+    Oi8vb2NzcC5wa2kuZ292Lmt6MA0GCSqGSIb3DQEBCwUAA4ICAQCk+elFd53MOCdkE8ok+E4n
+    x1ZfO427rm9LKaBMfWENfATWVH3SfmRm+7+Qc7WyGwh3pMSDpf/UgToanz33YmxN7OTFR7Fv
+    ox1ZadRiM2G49jOxh8Ewb5n5QyMyF/YRHlJSMOIRet3CoqRE8Xkd/O4oR1B+OgVy1i96qKsh
+    IF0Q5QgYPQsKKqpMPtbl0AhBpVslksYIbmcqBnyu/Ng/JAlTcCqLNd4eCU5YvEg1aZizr00K
+    qa+TpcjugVXJV7xRMtD6oy2XUx+s1O9Ie1TZR6LafY0pw3Wih/kTZEMBJ/ciY0N5Im4UrMhe
+    fB1z3GZ6x9QIFUkkuC3gdTpEeH7lK2tH5bPv85gGhW6FQTRgxIz8fvgGspsjqTyuY/DTxChT
+    W/hx9gQfaMbOsm3gh6mFOS/Fu/wQ1wlfkulRS7HqgkctMjNNT2rUGOK2g4OZXYSaYGfWHNT5
+    hpI8R98jO1e3zO6hWsfWCRPWzlvNziepzrc5i6vpdJN/p3rr7aZq9pVJA5s1xg/Ppg+dAVsM
+    fNTLXqjFfgXGWGcVLC6XqBmDhv2RiHUFN2ldMat+jiEP9z/jEXc4dbGmsadZv24XEmq2GEeT
+    AQeWgxxlpHnFItPuQTgunLm5HP2qHgNVxtJPDayoInH/ntiKhHLsZSyxuEbnX5gGcMb04QXv
+    GFXrF28X9JVW/A==
+
+  # Файл с сертификатом, чей статус необходимо получить.
+  # Попытка чтения файла производится только в случае, если в поле cert пустая
+  # строка.
+  # Файл может содержать сертификат как в ASN.1 DER, так и в PEM.
+  # certfile:
+
+  # Размер nonce в байтах.
+  # Значение 0 (не использовать nonce) можно установить только параметром
+  # командной строки ocsp.noncesize.
+  noncesize: 16
+
+  # Количество повторов отправки запросов о статусе.
+  # 0 - отправлять до принудительного завершения работы утилиты.
+  retrycount: 0
+
+  # Временной интервал между двумя попытками отправки запросов о статусе.
+  # Пустая строка - без интервала (можно установить только параметром командной строки ocsp.retryinterval).
+  # Поддерживаются следующие суффиксы: ms (миллисекунды), s (секунды), m (минуты), h (часы).
+  retryinterval: 27s
+
+  # Максимально допустимый размер ответа от сервера OCSP в байтах.
+  # Если установлен в 0, то размер не ограничен.
+  maxresponsesize: 4096
+
+
+# Настройки взаимодействия с сервером TSP.
+tsp:
+  # Флаг позволяет отключить опрос TSP сервера при установке в значение true.
+  disabled: false
+
+  # URL TSP сервера
+  url: http://tsp.pki.gov.kz
+
+  # Таймаут обработки сетевого запроса.
+  # Пустая строка - нет таймаута.
+  # Поддерживаются следующие суффиксы: ms (миллисекунды), s (секунды), m (минуты), h (часы).
+  timeout: 10s
+
+  # OID алгоритма политики формирования метки времени. Позволяет неявно задавать
+  # алгоритм подписи метки времени TSA (Time Stamp Authority).
+  policyoid: 1.2.398.3.3.2.6.2
+
+  # OID алгоритма хеширования, использованного для вычисления значений хеша данных
+  # на которую получаем метку времени. Используется для формирования
+  # MessageImprint.hashAlgorithm.
+  digestoid: 2.16.840.1.101.3.4.2.1
+
+  # Значение хеша данных на которые получаем метку времени, закодированное в base64.
+  # Для вычисления хеша использован алгоритм с OID-ом в digest.
+  # Если поле не указано, то должно быть задано поле digestsize.
+  # Представляет собой значение поля MessageImprint.hashedMessage.
+  # В данном примере содержится хеш на "Test string".
+  #digest: o+SdhD3xPC4qd4b27Nfg0YT0XXGNGsGopj5XBGbkid0=
+
+  # Размер хеша, вычисляемого с использованием алгоритма в digestoid (в байтах).
+  # Значение поля должно содержать не нулевое значение, если не указано поле digest.
+  # В этом случае для каждого запроса к TSP серверу генерируется случайное значение
+  # поля digest (MessageImprint.hashedMessage) указанного размера.
+  digestsize: 32
+
+  # Размер nonce в байтах.
+  # Значение 0 (не использовать nonce) можно установить только параметром
+  # командной строки tsp.noncesize.
+  noncesize: 16
+
+  # Количество повторов отправки запросов на формирование метки времени.
+  # 0 - до завершения работы утилиты.
+  retrycount: 0
+
+  # Временной интервал между двумя попытками отправки запросов на формирование метки времени.
+  # Пустая строка - без интервала (можно установить только параметром командной строки tsp.retryinterval).
+  # Поддерживаются следующие суффиксы: ms (миллисекунды), s (секунды), m (минуты), h (часы).
+  retryinterval: 33s
+
+  # Максимально допустимый размер ответа от сервера TSP в байтах.
+  # Если установлен в 0, то размер не ограничен.
+  maxresponsesize: 4096
