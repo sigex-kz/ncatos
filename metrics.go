@@ -163,7 +163,7 @@ func newMetrics(registry *prometheus.Registry) *metrics {
 
 	out.buildInfo.WithLabelValues(AppVersion, BuildTimeStamp).Add(1)
 
-	out.buildInfo.WithLabelValues(ConfigHash).Add(1)
+	out.configInfo.WithLabelValues(ConfigHash).Add(1)
 
 	return out
 }
