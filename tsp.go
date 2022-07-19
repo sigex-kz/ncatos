@@ -19,7 +19,7 @@ import (
 // ctx - контекст выхода. При отмене данного контекста все запущенные goroutine-ы должны завершить работу.
 // Возвращает канал, который будет закрыт при ошибке запуска/завершении работы goroutine-ы мониторинга.
 // В остальных случаях через него будут возвращены результаты работы мониторинга
-func tspMonitorStart(ctx context.Context) (<-chan error, error) {
+func tspMonitorStart(ctx context.Context) <-chan error {
 	cfg := getAppContext().Config.TSP
 	resultChannel := make(chan error, 1)
 
@@ -190,7 +190,7 @@ func tspMonitorStart(ctx context.Context) (<-chan error, error) {
 	ml.Log().
 		Int("retryCount", cfg.RetryCount).Dur("retryInterval", cfg.RetryIntervalValue).
 		Msg("start")
-	return resultChannel, nil
+	return resultChannel
 }
 
 // tspEncodeRequest позволяет закодировать TSP запрос в ASN.1.

@@ -105,25 +105,13 @@ func main() {
 	var ocspChannel, tspChannel, srvMetricsChannel <-chan error
 
 	if !getAppContext().Config.OCSP.Disabled {
-		ocspChannel, err = ocspMonitorStart(exitCtx)
-		if err != nil {
-			exitCode = 3
-			getAppContext().Logger.Log().Err(err).Msg("failed to start OCSP")
-			return
-		}
+		ocspChannel = ocspMonitorStart(exitCtx)
 	} else {
 		getAppContext().Logger.Log().Msg("OCSP disabled")
 	}
 
 	if !getAppContext().Config.TSP.Disabled {
-		tspChannel, err = tspMonitorStart(exitCtx)
-		if err != nil {
-			// отменим goroutine-у OCSP
-			exitCtxCancel()
-			exitCode = 4
-			getAppContext().Logger.Log().Err(err).Msg("failed to start TSP")
-			return
-		}
+		tspChannel = tspMonitorStart(exitCtx)
 	} else {
 		getAppContext().Logger.Log().Msg("TSP disabled")
 	}
@@ -138,13 +126,7 @@ func main() {
 	// запускаем сервер для предоставления статистики
 	if getAppContext().Config.Metrics.Enabled {
 		var srvMetricStopFunc func(time.Duration)
-		srvMetricStopFunc, srvMetricsChannel, err = startMetricsServer()
-		if err != nil {
-			exitCtxCancel()
-			exitCode = 6
-			getAppContext().Logger.Log().Err(err).Msg("failed to start metrics server")
-			return
-		}
+		srvMetricStopFunc, srvMetricsChannel = startMetricsServer()
 		defer srvMetricStopFunc(shutdownDelay)
 	}
 

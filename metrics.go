@@ -23,7 +23,7 @@ import (
 // Также возвращается канал по которому можно отследить ошибки ListenAndServe()
 // созданного сервера (т.е. фактически сервер прекратил обслуживать клиентские
 // запросы).
-func startMetricsServer() (stopFunc func(time.Duration), failureChannel <-chan error, outError error) {
+func startMetricsServer() (stopFunc func(time.Duration), failureChannel <-chan error) {
 	// создаем логгер для OCSP
 	ml := getAppContext().Logger.With().
 		Str("module", "server").Str("protocol", "http").
@@ -72,7 +72,7 @@ func startMetricsServer() (stopFunc func(time.Duration), failureChannel <-chan e
 	<-sch
 
 	ml.Log().Msg("start")
-	return stopFunc, resultChannel, nil
+	return stopFunc, resultChannel
 }
 
 // metrics содержит реестр и регистрируемые в нем метрки prometheus

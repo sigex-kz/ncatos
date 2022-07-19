@@ -23,7 +23,7 @@ import (
 //   данного канала разрешено только после закрытия startupChannel. В общем случае канал
 //   закрывается при отмене ctx. Единственная ошибка, приводящая к другому варианту завершения
 //   goroutine-ы - ошибка создания запроса (при генерации nonce, например).
-func ocspMonitorStart(ctx context.Context) (<-chan error, error) {
+func ocspMonitorStart(ctx context.Context) <-chan error {
 	cfg := getAppContext().Config.OCSP
 	resultChannel := make(chan error, 1)
 
@@ -187,7 +187,7 @@ func ocspMonitorStart(ctx context.Context) (<-chan error, error) {
 	ml.Log().
 		Int("retryCount", cfg.RetryCount).Dur("retryInterval", cfg.RetryIntervalValue).
 		Msg("start")
-	return resultChannel, nil
+	return resultChannel
 }
 
 // ocspEncodeRequest позволяет закодировать OCSP запрос в ASN.1.
