@@ -62,4 +62,12 @@ Command line flags:
 	clpTspRetryCount      = flag.Int("tsp.retrycount", 0, "number of times to send TSP request with retryinterval timeout between them (0 - endless)")
 	clpTspRetryInterval   = flag.String("tsp.retryinterval", defaultTspRetryInterval, "timeout between sending two TSP requests attempts (empty string - no timeout)")
 	clpTspMaxResponseSize = flag.Int64("tsp.maxresponsesize", defaultTspMaxResponseSize, "maximum size of TSP server response (bytes)")
+
+	// конфигурация HTTP
+	clpHttpDisabled        = flag.Bool("http.disabled", false, "flag allows to disable quering HTTP server (true)")
+	clpHttpURL             = flag.String("http.url", "", "HTTP server URL")
+	clpHttpTimeout         = flag.String("http.timeout", "", "network timeout for HTTP server (empty string - no timeout)")
+	clpHttpRetryCount      = flag.Int("http.retrycount", 0, "number of times to send HTTP request with retryinterval timeout between them (0 - endless)")
+	clpHttpRetryInterval   = flag.String("http.retryinterval", defaultHttpRetryInterval, "timeout between sending two HTTP requests attempts (empty string - no timeout)")
+	clpHttpMaxResponseSize = flag.Int64("http.maxresponsesize", defaultHttpMaxResponseSize, "maximum size of HTTP server response (bytes)")
 )

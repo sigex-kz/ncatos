@@ -24,6 +24,8 @@ type appConfig struct {
 	OCSP ocspConfig `json:"ocsp,omitempty" yaml:"ocsp,omitempty"`
 	// Настройки взаимодействия с TSP сервером
 	TSP tspConfig `json:"tsp,omitempty" yaml:"tsp,omitempty"`
+	// Настройки взаимодействия с HTTP сервером
+	HTTP httpConfig `json:"http,omitempty" yaml:"http,omitempty"`
 }
 
 // buildConfig создает объект конфигурации, считав настройки из файла и дополнив
@@ -78,6 +80,9 @@ func buildConfig() (*appConfig, error) {
 		return nil, validateError
 	}
 	if validateError := out.TSP.Validate(); validateError != nil {
+		return nil, validateError
+	}
+	if validateError := out.HTTP.Validate(); validateError != nil {
 		return nil, validateError
 	}
 

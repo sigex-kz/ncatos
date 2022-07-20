@@ -161,6 +161,10 @@ func newMetrics(registry *prometheus.Registry) *metrics {
 	out.responseErrors.WithLabelValues(string(protoTSP), string(responseErrorAsn))
 	out.responseErrors.WithLabelValues(string(protoTSP), string(responseErrorContents))
 
+	out.requestProcessingTimes.WithLabelValues(string(protoHTTP))
+	out.responseErrors.WithLabelValues(string(protoHTTP), string(responseErrorNet))
+	out.responseErrors.WithLabelValues(string(protoHTTP), string(responseErrorHTTP))
+
 	out.buildInfo.WithLabelValues(AppVersion, BuildTimeStamp).Add(1)
 
 	out.configInfo.WithLabelValues(ConfigHash).Add(1)

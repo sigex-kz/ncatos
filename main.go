@@ -116,7 +116,7 @@ func main() {
 	defer exitCtxCancel()
 
 	// запускаем горутины мониторов и сервер
-	var ocspChannel, tspChannel, srvMetricsChannel <-chan error
+	var ocspChannel, tspChannel, httpChannel, srvMetricsChannel <-chan error
 
 	if !getAppContext().Config.OCSP.Disabled {
 		ocspChannel = ocspMonitorStart(exitCtx)
@@ -130,8 +130,14 @@ func main() {
 		getAppContext().Logger.Log().Msg("TSP disabled")
 	}
 
+	if !getAppContext().Config.HTTP.Disabled {
+		httpChannel = httpMonitorStart(exitCtx)
+	} else {
+		getAppContext().Logger.Log().Msg("HTTP disabled")
+	}
+
 	// хотя бы один канал должен быть запущен
-	if ocspChannel == nil && tspChannel == nil {
+	if ocspChannel == nil && tspChannel == nil && httpChannel == nil {
 		getAppContext().Logger.Log().Msg("nothing to do (all monitors disabled)")
 		exitCode = 5
 		return
@@ -167,6 +173,13 @@ func main() {
 				exitCode = 8
 			}
 
+		case stopError = <-httpChannel:
+			httpChannel = nil
+			if stopError != nil {
+				stopError = fmt.Errorf("HTTP failed: [%w]", stopError)
+				exitCode = 8
+			}
+
 		case stopError = <-srvMetricsChannel:
 			stopError = fmt.Errorf("metrics server failed: [%w]", stopError)
 			exitCode = 9
@@ -175,7 +188,7 @@ func main() {
 			exitCtxCancel()
 			exitCode = 0
 		}
-		if exitCtx.Err() != nil || stopError != nil || (ocspChannel == nil && tspChannel == nil) {
+		if exitCtx.Err() != nil || stopError != nil || (ocspChannel == nil && tspChannel == nil && httpChannel == nil) {
 			break
 		}
 	}

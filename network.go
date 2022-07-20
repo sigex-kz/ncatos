@@ -84,3 +84,52 @@ func postRequest(ctx context.Context, client *http.Client, protocol protocolType
 
 	return result, err
 }
+
+// getRequest создает HTTP запрос с указанными данными, отправляет его серверу,
+// дожидается ответа и считывает тело ответа.
+//
+// Максимально считывается maxResponseSize байт ответа.
+func getRequest(ctx context.Context, client *http.Client, url string, maxSize int64) (networkResult, error) {
+	// создаем объект под результат обработки
+	result := networkResult{}
+
+	// создаем HTTP запрос
+	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return result, fmt.Errorf("failed to create HTTP request: [%s], [%w]", url, err)
+	}
+
+	// отправляем ответ серверу и дожидаемся ответа (таймаут определен в клиенте)
+	// здесь же считаем статистику времени обработки запроса.
+	startTime := time.Now()
+	httpResponse, err := client.Do(httpRequest)
+	result.SendReceiveTime = time.Since(startTime)
+	if err != nil {
+		return result, fmt.Errorf("failed to get request: [%s], [%w]", url, err)
+	}
+
+	// в любом случае закрываем тело ответа
+	defer func() {
+		_ = httpResponse.Body.Close() //nolint:errcheck // ошибка закрытия тела ответа неважна в данном случае
+	}()
+
+	// запоминаем статус код и тип содержимого
+	result.StatusCode = httpResponse.StatusCode
+	result.ContentType = httpResponse.Header.Get("Content-Type")
+
+	// считываем тело с учетом максимального размера
+	if maxSize > 0 {
+		limitedReader := &io.LimitedReader{
+			R: httpResponse.Body,
+			N: maxSize,
+		}
+		result.Body, err = io.ReadAll(limitedReader)
+		if err == nil && limitedReader.N == 0 {
+			err = fmt.Errorf("maximum response body size exceeded: [%d]", maxSize)
+		}
+	} else {
+		result.Body, err = io.ReadAll(httpResponse.Body)
+	}
+
+	return result, err
+}

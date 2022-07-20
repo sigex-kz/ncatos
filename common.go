@@ -24,6 +24,7 @@ type protocolType string
 const (
 	protoOCSP protocolType = "ocsp"
 	protoTSP  protocolType = "tsp"
+	protoHTTP protocolType = "http"
 )
 
 // поддерживаемы типы ошибок
