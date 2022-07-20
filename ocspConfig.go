@@ -12,9 +12,9 @@ import (
 
 // значения по умолчанию для "опасных" флагов
 const (
-	defaultOcspNonceSize             = 8    // байт
-	defaultOcspMaxResponseSize int64 = 8192 // байт
-	defaultOcspRetryInterval         = "15m"
+	defaultOCSPNonceSize             = 8    // байт
+	defaultOCSPMaxResponseSize int64 = 8192 // байт
+	defaultOCSPRetryInterval         = "15m"
 )
 
 // ocspConfig определяет структуру с настройками взаимодействия с OCSP сервером.
@@ -83,16 +83,16 @@ func (cfg *ocspConfig) SetDefaults() {
 		return
 	}
 	if cfg.NonceSize < 1 {
-		cfg.NonceSize = defaultOcspNonceSize
+		cfg.NonceSize = defaultOCSPNonceSize
 	}
 	if cfg.RetryInterval == "" {
-		cfg.RetryInterval = defaultOcspRetryInterval
+		cfg.RetryInterval = defaultOCSPRetryInterval
 	}
 	if cfg.MaxResponseSize == nil {
 		cfg.MaxResponseSize = new(int64)
 	}
 	if *cfg.MaxResponseSize == 0 {
-		*cfg.MaxResponseSize = defaultOcspMaxResponseSize
+		*cfg.MaxResponseSize = defaultOCSPMaxResponseSize
 	}
 }
 
@@ -105,29 +105,29 @@ func (cfg *ocspConfig) UpdateCommandLine(givenFlags []*flag.Flag) {
 	for _, f := range givenFlags {
 		switch f.Name {
 		case "ocsp.disabled":
-			cfg.Disabled = *clpOcspDisabled
+			cfg.Disabled = *clpOCSPDisabled
 		case "ocsp.url":
-			cfg.URL = *clpOcspURL
+			cfg.URL = *clpOCSPURL
 		case "ocsp.timeout":
-			cfg.Timeout = *clpOcspTimeout
+			cfg.Timeout = *clpOCSPTimeout
 		case "ocsp.digestoid":
-			cfg.DigestOID = *clpOcspDigestOID
+			cfg.DigestOID = *clpOCSPDigestOID
 		case "ocsp.namedigest":
-			cfg.NameDigest = *clpOcspNameDigest
+			cfg.NameDigest = *clpOCSPNameDigest
 		case "ocsp.keydigest":
-			cfg.KeyDigest = *clpOcspKeyDigest
+			cfg.KeyDigest = *clpOCSPKeyDigest
 		case "ocsp.cert":
-			cfg.Cert = *clpOcspCert
+			cfg.Cert = *clpOCSPCert
 		case "ocsp.certfile":
-			cfg.CertFile = *clpOcspCertFile
+			cfg.CertFile = *clpOCSPCertFile
 		case "ocsp.noncesize":
-			cfg.NonceSize = *clpOcspNonceSize
+			cfg.NonceSize = *clpOCSPNonceSize
 		case "ocsp.retrycount":
-			cfg.RetryCount = *clpOcspRetryCount
+			cfg.RetryCount = *clpOCSPRetryCount
 		case "ocsp.retryinterval":
-			cfg.RetryInterval = *clpOcspRetryInterval
+			cfg.RetryInterval = *clpOCSPRetryInterval
 		case "ocsp.maxresponsesize":
-			*cfg.MaxResponseSize = *clpOcspMaxResponseSize
+			*cfg.MaxResponseSize = *clpOCSPMaxResponseSize
 		}
 	}
 }

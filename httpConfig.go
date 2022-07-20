@@ -9,8 +9,8 @@ import (
 
 // значения по умолчанию для "опасных" флагов
 const (
-	defaultHttpMaxResponseSize int64 = 8192 // байт
-	defaultHttpRetryInterval         = "15m"
+	defaultHTTPMaxResponseSize int64 = 8192 // байт
+	defaultHTTPRetryInterval         = "15m"
 )
 
 // httpConfig определяет структуру с настройками взаимодействия с HTTP сервером.
@@ -49,13 +49,13 @@ func (cfg *httpConfig) SetDefaults() {
 		return
 	}
 	if cfg.RetryInterval == "" {
-		cfg.RetryInterval = defaultHttpRetryInterval
+		cfg.RetryInterval = defaultHTTPRetryInterval
 	}
 	if cfg.MaxResponseSize == nil {
 		cfg.MaxResponseSize = new(int64)
 	}
 	if *cfg.MaxResponseSize == 0 {
-		*cfg.MaxResponseSize = defaultHttpMaxResponseSize
+		*cfg.MaxResponseSize = defaultHTTPMaxResponseSize
 	}
 }
 
@@ -68,17 +68,17 @@ func (cfg *httpConfig) UpdateCommandLine(givenFlags []*flag.Flag) {
 	for _, f := range givenFlags {
 		switch f.Name {
 		case "http.disabled":
-			cfg.Disabled = *clpHttpDisabled
+			cfg.Disabled = *clpHTTPDisabled
 		case "http.url":
-			cfg.URL = *clpHttpURL
+			cfg.URL = *clpHTTPURL
 		case "http.timeout":
-			cfg.Timeout = *clpHttpTimeout
+			cfg.Timeout = *clpHTTPTimeout
 		case "http.retrycount":
-			cfg.RetryCount = *clpHttpRetryCount
+			cfg.RetryCount = *clpHTTPRetryCount
 		case "http.retryinterval":
-			cfg.RetryInterval = *clpHttpRetryInterval
+			cfg.RetryInterval = *clpHTTPRetryInterval
 		case "http.maxresponsesize":
-			*cfg.MaxResponseSize = *clpHttpMaxResponseSize
+			*cfg.MaxResponseSize = *clpHTTPMaxResponseSize
 		}
 	}
 }

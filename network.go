@@ -94,7 +94,7 @@ func getRequest(ctx context.Context, client *http.Client, url string, maxSize in
 	result := networkResult{}
 
 	// создаем HTTP запрос
-	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return result, fmt.Errorf("failed to create HTTP request: [%s], [%w]", url, err)
 	}

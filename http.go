@@ -110,9 +110,9 @@ func httpMonitorStart(ctx context.Context) <-chan error {
 					waitForTimeout(ctx, cfg.RetryIntervalValue)
 				}
 				continue
-			} else {
-				le.Msg("request succeed")
 			}
+
+			le.Msg("request succeed")
 
 			// пишем доп. данные
 			if verbose {

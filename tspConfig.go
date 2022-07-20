@@ -11,9 +11,9 @@ import (
 
 // значения по умолчанию для "опасных" флагов
 const (
-	defaultTspNonceSize             = 8    // байт
-	defaultTspMaxResponseSize int64 = 8192 // байт
-	defaultTspRetryInterval         = "15m"
+	defaultTSPNonceSize             = 8    // байт
+	defaultTSPMaxResponseSize int64 = 8192 // байт
+	defaultTSPRetryInterval         = "15m"
 )
 
 // tspConfig определяет структуру с настройками взаимодействия с TSP сервером.
@@ -83,16 +83,16 @@ func (cfg *tspConfig) SetDefaults() {
 		return
 	}
 	if cfg.NonceSize < 1 {
-		cfg.NonceSize = defaultTspNonceSize
+		cfg.NonceSize = defaultTSPNonceSize
 	}
 	if cfg.RetryInterval == "" {
-		cfg.RetryInterval = defaultTspRetryInterval
+		cfg.RetryInterval = defaultTSPRetryInterval
 	}
 	if cfg.MaxResponseSize == nil {
 		cfg.MaxResponseSize = new(int64)
 	}
 	if *cfg.MaxResponseSize == 0 {
-		*cfg.MaxResponseSize = defaultTspMaxResponseSize
+		*cfg.MaxResponseSize = defaultTSPMaxResponseSize
 	}
 }
 
@@ -105,27 +105,27 @@ func (cfg *tspConfig) UpdateCommandLine(givenFlags []*flag.Flag) {
 	for _, f := range givenFlags {
 		switch f.Name {
 		case "tsp.disabled":
-			cfg.Disabled = *clpTspDisabled
+			cfg.Disabled = *clpTSPDisabled
 		case "tsp.url":
-			cfg.URL = *clpTspURL
+			cfg.URL = *clpTSPURL
 		case "tsp.timeout":
-			cfg.Timeout = *clpTspTimeout
+			cfg.Timeout = *clpTSPTimeout
 		case "tsp.digestoid":
-			cfg.DigestOID = *clpTspDigestOID
+			cfg.DigestOID = *clpTSPDigestOID
 		case "tsp.policyoid":
-			cfg.PolicyOID = *clpTspPolicyOID
+			cfg.PolicyOID = *clpTSPPolicyOID
 		case "tsp.digest":
-			cfg.Digest = *clpTspDigest
+			cfg.Digest = *clpTSPDigest
 		case "tsp.digestsize":
-			cfg.DigestSize = *clpTspDigestSize
+			cfg.DigestSize = *clpTSPDigestSize
 		case "tsp.noncesize":
-			cfg.NonceSize = *clpTspNonceSize
+			cfg.NonceSize = *clpTSPNonceSize
 		case "tsp.retrycount":
-			cfg.RetryCount = *clpTspRetryCount
+			cfg.RetryCount = *clpTSPRetryCount
 		case "tsp.retryinterval":
-			cfg.RetryInterval = *clpTspRetryInterval
+			cfg.RetryInterval = *clpTSPRetryInterval
 		case "tsp.maxresponsesize":
-			*cfg.MaxResponseSize = *clpTspMaxResponseSize
+			*cfg.MaxResponseSize = *clpTSPMaxResponseSize
 		}
 	}
 }
