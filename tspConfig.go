@@ -92,7 +92,7 @@ func (cfg *tspConfig) SetDefaults() {
 		cfg.MaxResponseSize = new(int64)
 	}
 	if *cfg.MaxResponseSize == 0 {
-		*cfg.MaxResponseSize = defaultOcspMaxResponseSize
+		*cfg.MaxResponseSize = defaultTspMaxResponseSize
 	}
 }
 
@@ -124,7 +124,7 @@ func (cfg *tspConfig) UpdateCommandLine(givenFlags []*flag.Flag) {
 			cfg.RetryCount = *clpTspRetryCount
 		case "tsp.retryinterval":
 			cfg.RetryInterval = *clpTspRetryInterval
-		case "ocsp.maxresponsesize":
+		case "tsp.maxresponsesize":
 			*cfg.MaxResponseSize = *clpTspMaxResponseSize
 		}
 	}
