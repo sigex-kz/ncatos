@@ -1,498 +1,1542 @@
-# options for analysis running
+# Defines the configuration version.
+# The only possible value is "2".
+version: "2"
+
+linters:
+  # Default set of linters.
+  # The value can be: `standard`, `all`, `none`, or `fast`.
+  # Default: standard
+  default: none
+
+  # Enable specific linter.
+  # https://golangci-lint.run/usage/linters/#enabled-by-default
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - canonicalheader
+    - copyloopvar
+    - durationcheck
+    - embeddedstructfieldcheck
+    - err113
+    - errcheck
+    - errorlint
+    - exptostd
+    - fatcontext
+    - gocheckcompilerdirectives
+    - gocritic
+    - godox
+    - gosec
+    - govet
+    - grouper
+    - ineffassign
+    - intrange
+    - makezero
+    - mirror
+    - misspell
+    - mnd
+    - nakedret
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - nolintlint
+    - nosprintfhostport
+    - perfsprint
+    - prealloc
+    - predeclared
+    - promlinter
+    - reassign
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - tagalign
+    - thelper
+    - unconvert
+    - unparam
+    - unused
+    - usetesting
+    - wastedassign
+    - wsl_v5
+    - zerologlint
+
+  # Disable specific linter.
+  # https://golangci-lint.run/usage/linters/#disabled-by-default
+  # disable:
+  #   - asasalint
+  #   - asciicheck
+
+  # All available settings of specific linters.
+  settings:
+    # Check for pass []any as any in variadic func(...any).
+    asasalint:
+      # To specify a set of function names to exclude.
+      # The values are merged with the builtin exclusions.
+      # The builtin exclusions can be disabled by setting
+      # `use-builtin-exclusions` to `false`.
+      # Default: ["^(fmt|log|logger|t|)\.(Print|Fprint|Sprint|Fatal|Panic
+      # |Error|Warn|Warning|Info|Debug|Log)(|f|ln)$"]
+      exclude:
+        - Append
+        - \.Wrapf
+      # To enable/disable the asasalint builtin exclusions of function names.
+      # See the default value of `exclude` to get the builtin exclusions.
+      # Default: true
+      use-builtin-exclusions: true
+      # Ignore *_test.go files.
+      # Default: false
+      ignore-test: false
+
+    # A linter detects places where loop variables are copied.
+    copyloopvar:
+      # Check all assigning the loop variable to another variable.
+      # Default: false
+      check-alias: true
+
+    # Embedded types should be at the top of the field list of a struct, and there must be an empty line separating embedded fields from regular fields.
+    # embeddedstructfieldcheck:
+      # Checks that sync.Mutex and sync.RWMutex are not used as embedded fields.
+      # Default: false
+      # forbid-mutex: true
+
+    # Errcheck is a program for checking for unchecked errors in Go code.
+    # These unchecked errors can be critical bugs in some cases.
+    errcheck:
+      # Report about not checking of errors in type assertions:
+      # `a := b.(MyStruct)`.
+      # Such cases aren't reported by default.
+      # Default: false      disable-default-exclusions: false
+      check-type-assertions: true
+      # report about assignment of errors to blank identifier:
+      # `num, _ := strconv.Atoi(numStr)`.
+      # Such cases aren't reported by default.
+      # Default: false
+      check-blank: true
+      # List of functions to exclude from checking, where each entry is a
+      # single function to exclude.
+      # See https://github.com/kisielk/errcheck#excluding-functions for details.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+
+    # Errorlint is a linter for that can be used to find code that will cause
+    # problems with the error
+    # wrapping scheme introduced in Go 1.13.
+    errorlint:
+      # Check whether fmt.Errorf uses the %w verb for formatting errors.
+      # See the https://github.com/polyfloyd/go-errorlint for caveats.
+      # Default: true
+      errorf: true
+      # Permit more than 1 %w verb, valid per Go 1.20 (requires `errorf: true`).
+      # Default: true
+      errorf-multi: true
+      # Check for plain type assertions and type switches.
+      # Default: true
+      asserts: true
+      # Check for plain error comparisons.
+      # Default: true
+      comparison: true
+
+    #Finds repeated strings that could be replaced by a constant.
+    goconst:
+      # Minimal length of string constant.
+      # Default: 3
+      min-len: 3
+      # Minimum occurrences of constant string count to trigger issue.
+      # Default: 3
+      min-occurrences: 3
+
+
+    # Provides diagnostics that check for bugs, performance and style issues.
+    # Extensible without recompilation through dynamic rules.
+    # Dynamic rules are written declaratively with AST patterns, filters,
+    # report message and optional suggestion.
+    gocritic:
+      # Disable all checks.
+      # Default: false
+      disable-all: false
+      # Enable all checks.
+      # Default: false
+      enable-all: false
+      # Which checks should be disabled; can't be combined with
+      # 'enabled-checks'.
+      # Default: []
+      disabled-checks:
+        - dupImport # https://github.com/go-critic/go-critic/issues/845
+        - uncheckedInlineErr # false positives on if checked errors
+      # Enable multiple checks by tags in addition to default checks.
+      # Run `GL_DEBUG=gocritic golangci-lint run --enable=gocritic` to see all
+      # tags and checks.
+      # See https://github.com/go-critic/go-critic#usage -> section "Tags".
+      # Default: []
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+
+    # Check if comments end in a period.
+    godot:
+      # Comments to be checked: `declarations`, `toplevel`, `noinline` or `all`.
+      # Default: declarations
+      scope: all
+      # List of regexps for excluding particular comment lines from check.
+      # Default: []
+      exclude:
+        - '^fixme:'
+        - '^todo:'
+      # Check that each sentence starts with a capital letter.
+      # Default: false
+      capital: true
+      # Check that each sentence ends with a period.
+      # Default: true
+      period: false
+
+    # Vet examines Go source code and reports suspicious constructs.
+    # It is roughly the same as 'go vet' and uses its passes.
+    govet:
+      # Enable analyzers by name.
+      # (In addition to default:
+      #   appends, asmdecl, assign, atomic, bools, buildtag, cgocall,
+      #   composites, copylocks, defers, directive, errorsas, framepointer,
+      #   httpresponse, ifaceassert, loopclosure, lostcancel, nilfunc, printf,
+      #   shift, sigchanyzer, slog, stdmethods, stringintconv, structtag,
+      #   testinggoroutine, tests, timeformat, unmarshal, unreachable,
+      #   unsafeptr, unusedresult
+      # ).
+      # Run `GL_DEBUG=govet golangci-lint run --enable=govet` to see default,
+      # all available analyzers, and enabled analyzers.
+      # Default: []
+      enable:
+        # Check for possible unintended shadowing of variables.
+        - shadow
+      # Settings per analyzer.
+      settings:
+        # Comma-separated list of print function names to check (in addition
+        # to default, see `go tool vet help printf`).
+        # Default: []
+        printf:
+          funcs:
+            - (dfi/sigex/logger).Debugf
+            - (dfi/sigex/logger).Infof
+            - (dfi/sigex/logger).Warnf
+            - (dfi/sigex/logger).Errorf
+            - (dfi/sigex/logger).Logf
+
+    #Analyze expression groups.
+    grouper:
+      # Require the use of a single global 'const' declaration only.
+      # Default: false
+      const-require-single-const: false
+      # Require the use of grouped global 'const' declarations.
+      # Default: false
+      const-require-grouping: true
+      # Require the use of a single 'import' declaration only.
+      # Default: false
+      import-require-single-import: true
+      # Require the use of grouped 'import' declarations.
+      # Default: false
+      import-require-grouping: true
+      # Require the use of a single global 'type' declaration only.
+      # Default: false
+      type-require-single-type: false
+      # Require the use of grouped global 'type' declarations.
+      # Default: false
+      type-require-grouping: false
+      # Require the use of a single global 'var' declaration only.
+      # Default: false
+      var-require-single-var: true
+      # Require the use of grouped global 'var' declarations.
+      # Default: false
+      var-require-grouping: false
+
+    # Reports long lines.
+    lll:
+      # Max line length, lines longer will be reported.
+      # '\t' is counted as 1 character by default, and can be changed with the
+      # tab-width option.
+      # Default: 120.
+      line-length: 140
+      # Tab width in spaces.
+      # Default: 1
+      tab-width: 2
+
+    # An analyzer to detect magic numbers.
+    mnd:
+      # List of enabled checks, see
+      # https://github.com/tommy-muehle/go-mnd/#checks for description.
+      # Default: ["argument", "case", "condition", "operation", "return",
+      # "assign"]
+      checks:
+        - argument
+        - case
+        - condition
+        - return
+      # List of function patterns to exclude from analysis.
+      # Following functions are always ignored: `time.Date`,
+      # `strconv.FormatInt`, `strconv.FormatUint`, `strconv.FormatFloat`,
+      # `strconv.ParseInt`, `strconv.ParseUint`, `strconv.ParseFloat`.
+      # Default: []
+      ignored-functions:
+        - strconv.ParseInt
+        - strconv.FormatInt
+        - os.MkdirAll
+        - os.OpenFile
+
+    # Checks that functions with naked returns are not longer than a maximum
+    # size (can be zero).
+    nakedret:
+      # Make an issue if func has more lines of code than this setting, and it
+      # has naked returns.
+      # Default: 30
+      max-func-lines: 30
+
+    # Checks that there is no simultaneous return of nil error and an invalid
+    # value.
+    nilnil:
+      # List of return types to check.
+      # Default: ["ptr", "func", "iface", "map", "chan", "uintptr",
+      # "unsafeptr"]
+      checked-types:
+        - ptr
+        - func
+        - iface
+        - map
+        - chan
+
+    # Reports ill-formed or insufficient nolint directives.
+    nolintlint:
+      # Exclude following linters from requiring an explanation.
+      # Default: []
+      allow-no-explanation:
+        - revive
+      # Enable to require an explanation of nonzero length after each nolint
+      # directive.
+      # Default: false
+      require-explanation: true
+      # Enable to require nolint directives to mention the specific linter
+      # being suppressed.
+      # Default: false
+      require-specific: true
+
+    # Finds slice declarations that could potentially be pre-allocated.
+    prealloc:
+      # Report pre-allocation suggestions only on simple loops that have no
+      # returns/breaks/continues/gotos in them.
+      # Default: true
+      simple: true
+      # Report pre-allocation suggestions on range loops.
+      # Default: true
+      range-loops: true
+      # Report pre-allocation suggestions on for loops.
+      # Default: false
+      for-loops: true
+
+    # Find code that shadows one of Go's predeclared identifiers.
+    predeclared:
+      # List of predeclared identifiers to not report on.
+      # Default: []
+      ignore:
+        - new
+        - int
+      # Include method names and field names in checks.
+      # Default: false
+      qualified-name: true
+
+    # Check Prometheus metrics naming via promlint.
+    promlinter:
+      # Promlinter cannot infer all metrics name in static analysis.
+      # Enable strict mode will also include the errors caused by failing to
+      # parse the args.
+      # Default: false
+      strict: true
+      # Please refer to https://github.com/yeya24/promlinter#usage for
+      # detailed usage.
+      # Default: []
+      disabled-linters:
+        # Counter detects issues specific to counters, as well as patterns
+        # that should only be used with counters.
+        - Counter
+        # HistogramSummaryReserved detects when other types of metrics use
+        # names or labels reserved for use by histograms and/or summaries.
+        - HistogramSummaryReserved
+        # CamelCase detects metric names and label names written in camelCase.
+        - CamelCase
+
+    # Fast, configurable, extensible, flexible, and beautiful linter for Go.
+    # Drop-in replacement of golint.
+    revive:
+      # Maximum number of open files at the same time.
+      # See https://github.com/mgechev/revive#command-line-flags
+      # Defaults to unlimited.
+      max-open-files: 200
+      # Sets the default failure confidence.
+      # This means that linting errors with less than 0.8 confidence will be
+      # ignored.
+      # Default: 0.8
+      confidence: 0.1
+      # Run `GL_DEBUG=revive golangci-lint run --enable-only=revive` to see
+      # default, all available rules, and enabled rules.
+      rules:
+        # Check for commonly mistaken usages of the sync/atomic package
+        - name: atomic
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Checks given banned characters in identifiers(func, var, const).
+        #Comments are not checked.
+        - name: banned-characters
+          arguments:
+            - Ω
+            - Σ
+            - σ
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Warns on bare (a.k.a. naked) returns
+        - name: bare-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Blank import should be only in a main or test package, or have a
+        # comment justifying it.
+        - name: blank-imports
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Using Boolean literals (true, false) in logic expressions may make
+        # the code less readable. This rule suggests removing Boolean literals
+        # from logic expressions.
+        - name: bool-literal-in-expr
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Explicitly invoking the garbage collector is, except for specific
+        # uses in benchmarking, very dubious.
+        # The garbage collector can be configured through environment variables
+        - name: call-to-gc
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Spots comments of the form:
+        # //This is a malformed comment: no space between // and the start of
+        # the sentence
+        - name: comment-spacings
+          arguments:
+            - mypragma
+            - otherpragma
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Methods or fields of struct that have names different only by
+        # capitalization could be confusing.
+        - name: confusing-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Function or methods that return multiple, no named, values of the
+        # same type could induce error.
+        - name: confusing-results
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # The rule spots logical expressions that evaluate always to the same
+        # value.
+        - name: constant-logical-expr
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # context.Context should be the first parameter of a function. This
+        # rule spots function declarations that do not follow the convention.
+        - name: context-as-argument
+          arguments:
+            - allowTypesBefore: '*testing.T,*github.com/user/repo/testing.Harness'
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Basic types should not be used as a key in context.WithValue.
+        - name: context-keys-type
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule spots potential dataraces caused by go-routines capturing
+        # (by-reference) particular identifiers of the function from which
+        # go-routines are created. The rule is able to spot two of such cases:
+        # go-routines capturing named return values, and capturing for-range
+        # values.
+        - name: datarace
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns on some common mistakes when using defer statement.
+        - name: defer
+          arguments:
+            - - "loop" # deferring inside loops can be misleading
+              # deferring a call to a method can lead to subtle bugs if the
+              # method does not have a pointer receiver
+              - "method-call"
+              # calling recover outside a deferred function has no effect
+              - "recover"
+              # calling recover at the time a defer is registered, rather than
+              # as part of the deferred callback. e.g. defer recover() or
+              # equivalent.
+              - "immediate-recover"
+              # returning values form a deferred function has no effect
+              - "return"
+          severity: warning
+          disabled: false
+          exclude: [""]
+        #  Importing with . makes the programs much harder to understand because
+        # it is unclear whether names belong to the current package or to an
+        # imported package.
+        - name: dot-imports
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # It is possible to unintentionally import the same package twice. This
+        # rule looks for packages that are imported two or more times.
+        - name: duplicated-imports
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # In Go it is idiomatic to minimize nesting statements, a typical
+        # example is to avoid if-then-else constructions.
+        - name: early-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Empty blocks make code less readable and could be a symptom of a bug
+        # or unfinished refactoring.
+        - name: empty-block
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Sometimes gofmt is not enough to enforce a common formatting of a
+        # code-base;
+        # this rule warns when there are heading or trailing newlines in code
+        # blocks.
+        - name: empty-lines
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # By convention, for the sake of readability, variables of type error
+        # must be named with the prefix err.
+        - name: error-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # By convention, for the sake of readability, the errors should be last
+        # in the list of returned values by a function.
+        - name: error-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # It is possible to get a simpler program by replacing
+        # errors.New(fmt.Sprintf())
+        # with fmt.Errorf(). This rule spots that kind of simplification
+        # opportunities.
+        - name: errorf
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Exported function and methods should have comments. This warns on
+        # undocumented exported functions and methods.
+        - name: exported
+          arguments:
+            # enables checking public methods of private types
+            - checkPrivateReceivers
+            # replaces the use of the term stutters by repetitive in failure
+            # messages
+            - sayRepetitiveInsteadOfStutters
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Typically, functions with names prefixed with Get are supposed to
+        # return a value.
+        - name: get-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # an if-then-else conditional with identical implementations in both
+        # branches is an error.
+        - name: identical-branches
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Checking if an error is nil to just after return the error or nil is
+        # redundant.
+        - name: if-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # By convention, for better readability, incrementing an integer
+        # variable by 1 is recommended to be done using the ++ operator.
+        # This rule spots expressions like i += 1 and i -= 1 and proposes to
+        # change them into i++ and i--.
+        - name: increment-decrement
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # To improve the readability of code, it is recommended to reduce the
+        # indentation as much as possible. This rule highlights redundant
+        # else-blocks that can be eliminated from the code.
+        - name: indent-error-flow
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # enforces clear and lowercase import alias names, echoing the
+        # principles of good package naming
+        - name: import-alias-naming
+          arguments:
+            - ^[a-z][a-z0-9]{0,}$
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Warns when importing block-listed packages
+        - name: imports-blocklist
+          arguments:
+            - crypto/md5
+            - crypto/sha1
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # In Go it is possible to declare identifiers (packages, structs,
+        # interfaces, parameters, receivers, variables, constants...) that
+        # conflict with the name of an imported package. This rule spots
+        # identifiers that shadow an import.
+        - name: import-shadowing
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # A function that modifies its parameters can be hard to understand.
+        # It can also be misleading if the arguments are passed by value by the
+        # caller. This rule warns when a function modifies one or more of its
+        # parameters.
+        - name: modifies-parameter
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # A method that modifies its receiver value can have undesired behavior.
+        # The modification can be also the root of a bug because the actual
+        # value receiver could be a copy of that used at the calling site.
+        # This rule warns when a method modifies its receiver.
+        - name: modifies-value-receiver
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Packages declaring structs that contain other inline struct
+        # definitions can be hard to understand/read for other developers.
+        - name: nested-structs
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # conditional expressions can be written to take advantage of short
+        # circuit evaluation and speed up its average evaluation time by
+        # forcing the evaluation of less time-consuming terms before more
+        # costly ones.
+        - name: optimize-operands-order
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Packages should have comments
+        - name: package-comments
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule suggests a shorter way of writing ranges that do not use
+        # the second value.
+        - name: range
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when a range value (or index) is used inside a closure
+        - name: range-val-in-closure
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when assigning the address of the variable, passing
+        # the address to append() or using it in a map.
+        - name: range-val-address
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # By convention, receiver names in a method should reflect their
+        # identity.
+        # For example, if the receiver is of type Parts, p is an adequate name
+        # for it. Contrary to other languages, it is not idiomatic to name
+        # receivers as this or self.
+        - name: receiver-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns on redundant import aliases. This happens when the
+        # alias used on the import statement matches the imported package name
+        - name: redundant-import-alias
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Constant names like false, true, nil, function names like append,
+        # make, and basic type names like bool, and byte are not reserved words
+        # of the language; therefore the can be redefined. Even if possible,
+        # redefining these built in names can lead to bugs very difficult
+        # to detect.
+        - name: redefines-builtin-id
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # explicit type conversion string(i) where i has an integer type other
+        # than rune might behave not as expected by the developer
+        # (e.g. string(42) is not "42").
+        # This rule spot that kind of suspicious conversions.
+        - name: string-of-int
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule allows you to configure a list of regular expressions that
+        # string literals in certain function calls are checked against.
+        - name: string-format
+          arguments:
+            - - core.WriteError[1].Message
+              - /^([^A-Z]|$)/
+              - must not start with a capital letter
+            - - fmt.Errorf[0]
+              - /(^|[^\.!?])$/
+              - must not end in punctuation
+            - - panic
+              - /^[^\n]*$/
+              - must not contain line breaks
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Struct tags are not checked at compile time. This rule spots errors
+        # in struct tags
+        - name: struct-tag
+          arguments:
+            - json,inline
+            - bson,outline,gnu
+            - yaml,-
+            - validate,notBlank,gte,language,emailLanguage,asn1oid,qrColor,qrLevel,base64Std,gtefield,ltefield,omitempty,unique,-
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule highlights redundant else-blocks that can be eliminated
+        # from the code.
+        - name: superfluous-else
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when using == and != for equality check time.Time
+        # and suggest to time.time.Equal method
+        - name: time-equal
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Using unit-specific suffix like "Secs", "Mins", ... when naming
+        # variables of type time.Duration can be misleading, this rule
+        # highlights those cases.
+        - name: time-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when initialism, variable or package naming
+        # conventions are not followed. It ignores functions starting with
+        # Example, Test, Benchmark, and Fuzz in test files, preserving golint
+        # original behavior.
+        - name: var-naming
+          arguments:
+            - [ "ID" ] # AllowList
+            - [ "VM" ] # DenyList
+            - - upper-case-const: true # Extra parameter (upper-case-const|skip-package-name-checks)
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule proposes simplifications of variable declarations.
+        - name: var-declaration
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Unconditional recursive calls will produce infinite recursion, thus
+        # program stack overflow. This rule detects and warns about
+        # unconditional (direct) recursive calls.
+        - name: unconditional-recursion
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # this rule warns on wrongly named un-exported symbols
+        - name: unexported-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when an exported function or method returns a value
+        # of an un-exported type.
+        - name: unexported-return
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns when errors returned by a function are not explicitly
+        # handled on the caller side.
+        # Configuration: function names regexp patterns to ignore
+        - name: unhandled-error
+          arguments:
+            - fmt\.Print.*
+            - fmt\.Fprint.*
+            - io\.WriteString
+            - bytes\.Buffer\.Write
+            - strings\.Builder\.WriteString
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule suggests to remove redundant statements like a break at the
+        # end of a case block, for improving the code's readability.
+        - name: unnecessary-stmt
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule spots and proposes to remove unreachable code.
+        - name: unreachable-code
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns on unused parameters.
+        # Configuration: Supports arguments with single of map[string]any with
+        # option allowRegex (allowregex, allow-regex) to provide additional to
+        # _ mask to allowed unused parameter names.
+        - name: unused-parameter
+          arguments:
+            - allowRegex: ^_
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns on unused method receivers.
+        # Configuration: Supports arguments with single of map[string]any with
+        # option allowRegex to provide additional to _ mask to allowed unused
+        # receiver names.
+        - name: unused-receiver
+          arguments:
+            - allowRegex: ^_
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # This rule warns on useless break statements in case clauses of switch
+        # and select statements.
+        - name: useless-break
+          severity: warning
+          disabled: false
+          exclude: [""]
+        # Function parameters that are passed by value, are in fact a copy of
+        # the original argument. Passing a copy of a sync.WaitGroup is
+        # usually not what the developer wants to do
+        - name: waitgroup-by-value
+          severity: warning
+          disabled: false
+          exclude: [""]
+
+    # Checks whether Rows.Err of rows is checked successfully.
+    rowserrcheck:
+      # database/sql is always checked.
+      # Default: []
+      packages:
+        - github.com/jmoiron/sqlx
+
+    # It's the set of rules from staticcheck.
+    staticcheck:
+      # SAxxxx checks in
+      # https://staticcheck.dev/docs/configuration/options/#checks
+      # Example (to disable some checks): [ "all", "-SA1000", "-SA1001"]
+      # Default: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021",
+      # "-ST1022"]
+      checks:
+        # Invalid regular expression.
+        - SA1000
+        # Invalid template.
+        - SA1001
+        # Invalid format in 'time.Parse'.
+        - SA1002
+        # Unsupported argument to functions in 'encoding/binary'.
+        - SA1003
+        # Suspiciously small untyped constant in 'time.Sleep'.
+        - SA1004
+        # Invalid first argument to 'exec.Command'.
+        - SA1005
+        # 'Printf' with dynamic first argument and no further arguments.
+        - SA1006
+        # Invalid URL in 'net/url.Parse'.
+        - SA1007
+        # Non-canonical key in 'http.Header' map.
+        - SA1008
+        # '(*regexp.Regexp).FindAll' called with 'n == 0', which will always
+        # return zero results.
+        - SA1010
+        # Various methods in the "strings" package expect valid UTF-8, but
+        # invalid input is provided.
+        - SA1011
+        # A nil 'context.Context' is being passed to a function, consider using
+        # 'context.TODO' instead.
+        - SA1012
+        # 'io.Seeker.Seek' is being called with the whence constant as the
+        # first argument, but it should be the second.
+        - SA1013
+        # Non-pointer value passed to 'Unmarshal' or 'Decode'.
+        - SA1014
+        # Using 'time.Tick' in a way that will leak. Consider using
+        # 'time.NewTicker', and only use 'time.Tick' in tests, commands and
+        # endless functions.
+        - SA1015
+        # Trapping a signal that cannot be trapped.
+        - SA1016
+        # Channels used with 'os/signal.Notify' should be buffered.
+        - SA1017
+        # 'strings.Replace' called with 'n == 0', which does nothing.
+        - SA1018
+        # Using a deprecated function, variable, constant or field.
+        - SA1019
+        # Using an invalid host:port pair with a 'net.Listen'-related function.
+        - SA1020
+        # Using 'bytes.Equal' to compare two 'net.IP'.
+        - SA1021
+        # Modifying the buffer in an 'io.Writer' implementation.
+        - SA1023
+        # A string cutset contains duplicate characters.
+        - SA1024
+        # It is not possible to use '(*time.Timer).Reset''s return value
+        # correctly.
+        - SA1025
+        # Cannot marshal channels or functions.
+        - SA1026
+        # Atomic access to 64-bit variable must be 64-bit aligned.
+        - SA1027
+        # 'sort.Slice' can only be used on slices.
+        - SA1028
+        # Inappropriate key in call to 'context.WithValue'.
+        - SA1029
+        # Invalid argument in call to a 'strconv' function.
+        - SA1030
+        # Overlapping byte slices passed to an encoder.
+        - SA1031
+        # Wrong order of arguments to 'errors.Is'.
+        - SA1032
+        # 'sync.WaitGroup.Add' called inside the goroutine, leading to a race
+        # condition.
+        - SA2000
+        # Empty critical section, did you mean to defer the unlock?.
+        - SA2001
+        # Called 'testing.T.FailNow' or 'SkipNow' in a goroutine, which isn't
+        # allowed.
+        - SA2002
+        # Deferred 'Lock' right after locking, likely meant to defer 'Unlock'
+        # instead.
+        - SA2003
+        # 'TestMain' doesn't call 'os.Exit', hiding test failures.
+        - SA3000
+        # Assigning to 'b.N' in benchmarks distorts the results.
+        - SA3001
+        # Binary operator has identical expressions on both sides.
+        - SA4000
+        # '&*x' gets simplified to 'x', it does not copy 'x'.
+        - SA4001
+        # Comparing unsigned values against negative values is pointless.
+        - SA4003
+        # The loop exits unconditionally after one iteration.
+        - SA4004
+        # Field assignment that will never be observed. Did you mean to use a
+        # pointer receiver?.
+        - SA4005
+        # A value assigned to a variable is never read before being
+        # overwritten. Forgotten error check or dead code?.
+        - SA4006
+        # The variable in the loop condition never changes, are you
+        # incrementing the wrong variable?.
+        - SA4008
+        # A function argument is overwritten before its first use.
+        - SA4009
+        # The result of 'append' will never be observed anywhere.
+        - SA4010
+        # Break statement with no effect. Did you mean to break out of an
+        # outer loop?.
+        - SA4011
+        # Comparing a value against NaN even though no value is equal to NaN.
+        - SA4012
+        # Negating a boolean twice ('!!b') is the same as writing 'b'. This is
+        # either redundant, or a typo.
+        - SA4013
+        # An if/else if chain has repeated conditions and no side-effects;
+        # if the condition didn't match the first time, it won't match the
+        # second time, either.
+        - SA4014
+        # Calling functions like 'math.Ceil' on floats converted from integers
+        # doesn't do anything useful.
+        - SA4015
+        # Certain bitwise operations, such as 'x ^ 0', do not do anything
+        # useful.
+        - SA4016
+        # Discarding the return values of a function without side effects,
+        # making the call pointless.
+        - SA4017
+        # Self-assignment of variables.
+        - SA4018
+        # Multiple, identical build constraints in the same file.
+        - SA4019
+        # Unreachable case clause in a type switch.
+        - SA4020
+        # "x = append(y)" is equivalent to "x = y".
+        - SA4021
+        # Comparing the address of a variable against nil.
+        - SA4022
+        # Impossible comparison of interface value with untyped nil.
+        - SA4023
+        # Checking for impossible return value from a builtin function.
+        - SA4024
+        # Integer division of literals that results in zero.
+        - SA4025
+        # Go constants cannot express negative zero.
+        - SA4026
+        # '(*net/url.URL).Query' returns a copy, modifying it doesn't change
+        # the URL.
+        - SA4027
+        # 'x % 1' is always zero.
+        - SA4028
+        # Ineffective attempt at sorting slice.
+        - SA4029
+        # Ineffective attempt at generating random number.
+        - SA4030
+        # Checking never-nil value against nil.
+        - SA4031
+        # Comparing 'runtime.GOOS' or 'runtime.GOARCH' against impossible value.
+        - SA4032
+        # Assignment to nil map.
+        - SA5000
+        # Deferring 'Close' before checking for a possible error.
+        - SA5001
+        # The empty for loop ("for {}") spins and can block the scheduler.
+        - SA5002
+        # Defers in infinite loops will never execute.
+        - SA5003
+        # "for { select { ..." with an empty default branch spins.
+        - SA5004
+        # The finalizer references the finalized object, preventing garbage
+        # collection.
+        - SA5005
+        # Infinite recursive call.
+        - SA5007
+        # Invalid struct tag.
+        - SA5008
+        # Invalid Printf call.
+        - SA5009
+        # Impossible type assertion.
+        - SA5010
+        # Possible nil pointer dereference.
+        - SA5011
+        # Passing odd-sized slice to function expecting even size.
+        - SA5012
+        # Using 'regexp.Match' or related in a loop, should use
+        # 'regexp.Compile'.
+        - SA6000
+        # Missing an optimization opportunity when indexing maps by byte slices.
+        - SA6001
+        # Storing non-pointer values in 'sync.Pool' allocates memory.
+        - SA6002
+        # Converting a string to a slice of runes before ranging over it.
+        - SA6003
+        # Inefficient string comparison with 'strings.ToLower' or
+        # 'strings.ToUpper'.
+        - SA6005
+        # Using io.WriteString to write '[]byte'.
+        - SA6006
+        # Defers in range loops may not run when you expect them to.
+        - SA9001
+        # Using a non-octal 'os.FileMode' that looks like it was meant to be
+        # in octal.
+        - SA9002
+        # Empty body in an if or else branch.
+        - SA9003
+        # Only the first constant has an explicit type.
+        - SA9004
+        # Trying to marshal a struct with no public fields nor custom
+        # marshaling.
+        - SA9005
+        # Dubious bit shifting of a fixed size integer value.
+        - SA9006
+        # Deleting a directory that shouldn't be deleted.
+        - SA9007
+        # 'else' branch of a type assertion is probably not reading the right
+        # value.
+        - SA9008
+        # Ineffectual Go compiler directive.
+        - SA9009
+        # Incorrect or missing package comment.
+        - ST1000
+        # Dot imports are discouraged.
+        - ST1001
+        # Poorly chosen identifier.
+        - ST1003
+        # Incorrectly formatted error string.
+        - ST1005
+        # Poorly chosen receiver name.
+        - ST1006
+        # A function's error value should be its last return value.
+        - ST1008
+        # Poorly chosen name for variable of type 'time.Duration'.
+        - ST1011
+        # Poorly chosen name for error variable.
+        - ST1012
+        # Should use constants for HTTP error codes, not magic numbers.
+        - ST1013
+        # A switch's default case should be the first or last case.
+        - ST1015
+        # Use consistent method receiver names.
+        - ST1016
+        # Don't use Yoda conditions.
+        - ST1017
+        # Avoid zero-width and control characters in string literals.
+        - ST1018
+        # Importing the same package multiple times.
+        - ST1019
+        # The documentation of an exported function should start with the
+        # function's name.
+        - ST1020
+        # The documentation of an exported type should start with type's name.
+        - ST1021
+        # The documentation of an exported variable or constant should start
+        # with variable's name.
+        - ST1022
+        # Redundant type in variable declaration.
+        - ST1023
+        # Use plain channel send or receive instead of single-case select.
+        - S1000
+        # Replace for loop with call to copy.
+        - S1001
+        # Omit comparison with boolean constant.
+        - S1002
+        # Replace call to 'strings.Index' with 'strings.Contains'.
+        - S1003
+        # Replace call to 'bytes.Compare' with 'bytes.Equal'.
+        - S1004
+        # Drop unnecessary use of the blank identifier.
+        - S1005
+        # Use "for { ... }" for infinite loops.
+        - S1006
+        # Simplify regular expression by using raw string literal.
+        - S1007
+        # Simplify returning boolean expression.
+        - S1008
+        # Omit redundant nil check on slices, maps, and channels.
+        - S1009
+        # Omit default slice index.
+        - S1010
+        # Use a single 'append' to concatenate two slices.
+        - S1011
+        # Replace 'time.Now().Sub(x)' with 'time.Since(x)'.
+        - S1012
+        # Use a type conversion instead of manually copying struct fields.
+        - S1016
+        # Replace manual trimming with 'strings.TrimPrefix'.
+        - S1017
+        # Use "copy" for sliding elements.
+        - S1018
+        # Simplify "make" call by omitting redundant arguments.
+        - S1019
+        # Omit redundant nil check in type assertion.
+        - S1020
+        # Merge variable declaration and assignment.
+        - S1021
+        # Omit redundant control flow.
+        - S1023
+        # Replace 'x.Sub(time.Now())' with 'time.Until(x)'.
+        - S1024
+        # Don't use 'fmt.Sprintf("%s", x)' unnecessarily.
+        - S1025
+        # Simplify error construction with 'fmt.Errorf'.
+        - S1028
+        # Range over the string directly.
+        - S1029
+        # Use 'bytes.Buffer.String' or 'bytes.Buffer.Bytes'.
+        - S1030
+        # Omit redundant nil check around loop.
+        - S1031
+        # Use 'sort.Ints(x)', 'sort.Float64s(x)', and 'sort.Strings(x)'.
+        - S1032
+        # Unnecessary guard around call to "delete".
+        - S1033
+        # Use result of type assertion to simplify cases.
+        - S1034
+        # Redundant call to 'net/http.CanonicalHeaderKey' in method call on
+        # 'net/http.Header'.
+        - S1035
+        # Unnecessary guard around map access.
+        - S1036
+        # Elaborate way of sleeping.
+        - S1037
+        # Unnecessarily complex way of printing formatted string.
+        - S1038
+        # Unnecessary use of 'fmt.Sprint'.
+        - S1039
+        # Type assertion to current type.
+        - S1040
+        # Apply De Morgan's law.
+        - QF1001
+        # Convert untagged switch to tagged switch.
+        - QF1002
+        # Convert if/else-if chain to tagged switch.
+        - QF1003
+        # Use 'strings.ReplaceAll' instead of 'strings.Replace' with 'n == -1'.
+        - QF1004
+        # Expand call to 'math.Pow'.
+        - QF1005
+        # Lift 'if'+'break' into loop condition.
+        - QF1006
+        # Merge conditional assignment into variable declaration.
+        - QF1007
+        # Omit embedded fields from selector expression.
+        - QF1008
+        # Use 'time.Time.Equal' instead of '==' operator.
+        - QF1009
+        # Convert slice of bytes to string when printing it.
+        - QF1010
+        # Omit redundant type from variable declaration.
+        - QF1011
+        # Use 'fmt.Fprintf(x, ...)' instead of 'x.Write(fmt.Sprintf(...))'.
+        - QF1012
+
+    # Check that struct tags are well aligned.
+    tagalign:
+      # Whether enable align. If true, the struct tags will be aligned.
+      align: true
+      # Whether enable tags sort.
+      sort: true
+      # Specify the order of tags, the other tags will be sorted by name.
+      # This option will be ignored if `sort` is false.
+      # Default: []
+      order:
+        - default
+        - yaml
+        - json
+        - validate
+      # Whether enable strict style.
+      # In this style, the tags will be sorted and aligned in the dictionary
+      # order, and the tags with the same name will be aligned together.
+      # Note: This option will be ignored if 'align' or 'sort' is false.
+      # Default: false
+      strict: true
+
+    # Thelper detects tests helpers which is not start with t.Helper() method.
+    thelper:
+      test:
+        # Check *testing.T is first param (or after context.Context) of helper
+        # function.
+        # Default: true
+        first: false
+        # Check *testing.T param has name t.
+        # Default: true
+        name: false
+        # Check t.Helper() begins helper function.
+        # Default: true
+        begin: false
+      benchmark:
+        # Check *testing.B is first param (or after context.Context) of helper
+        # function.
+        # Default: true
+        first: false
+        # Check *testing.B param has name b.
+        # Default: true
+        name: false
+        # Check b.Helper() begins helper function.
+        # Default: true
+        begin: false
+      tb:
+        # Check *testing.TB is first param (or after context.Context) of helper
+        # function.
+        # Default: true
+        first: false
+        # Check *testing.TB param has name tb.
+        # Default: true
+        name: false
+        # Check tb.Helper() begins helper function.
+        # Default: true
+        begin: false
+
+    # Reports uses of functions with replacement inside the testing package.
+    usetesting:
+      # Enable/disable `context.Background()` detections.
+      # Disabled if Go < 1.24.
+      # Default: true
+      context-background: true
+      # Enable/disable `context.TODO()` detections.
+      # Disabled if Go < 1.24.
+      # Default: true
+      context-todo: true
+      # Enable/disable `os.Chdir()` detections.
+      # Disabled if Go < 1.24.
+      # Default: true
+      os-chdir: true
+      # Enable/disable `os.MkdirTemp()` detections.
+      # Default: true
+      os-mkdir-temp: true
+      # Enable/disable `os.Setenv()` detections.
+      # Default: true
+      os-setenv: true
+      # Enable/disable `os.TempDir()` detections.
+      # Default: false
+      os-temp-dir: true
+      # Enable/disable `os.CreateTemp("", ...)` detections.
+      # Default: true
+      os-create-temp: true
+
+    # Checks that errors returned from external packages are wrapped.
+    wrapcheck:
+      # An array of strings that specify substrings of signatures to ignore.
+      # If this set, it will override the default set of ignored signatures.
+      # See https://github.com/tomarrell/wrapcheck#configuration for more
+      # information.
+      # Default: [".Errorf(", "errors.New(", "errors.Unwrap(",
+      # "errors.Join(", ".Wrap(", ".Wrapf(", ".WithMessage(",
+      # ".WithMessagef(", ".WithStack("]
+      ignore-sigs:
+        - .Errorf(
+        - errors.New(
+        - errors.Unwrap(
+        - errors.Join(
+        - .Wrap(
+        - .Wrapf(
+        - .WithMessage(
+        - .WithMessagef(
+        - .WithStack(
+      # An array of strings that specify regular expressions of signatures
+      # to ignore.
+      # Default: []
+      ignore-sig-regexps:
+        - \.New.*Error\(
+      # An array of strings that specify globs of packages to ignore.
+      # Default: []
+      ignore-package-globs:
+        - encoding/*
+        - github.com/pkg/*
+      # An array of strings that specify regular expressions of interfaces
+      # to ignore.
+      # Default: []
+      ignore-interface-regexps:
+        - ^(?i)c(?-i)ach(ing|e)
+
+    # Add or remove empty lines.
+    wsl_v5:
+      # Default checks to use.
+      # Can be `all`, `none`, `default` or empty.
+      # https://github.com/bombsimon/wsl/tree/main?tab=readme-ov-file#checks-and-configuration
+      # Default: ""
+      default: ""
+      # Enabled checks.
+      # Will be additive to any presets.
+      # https://github.com/bombsimon/wsl/tree/main?tab=readme-ov-file#checks-and-configuration
+      # Default: []
+      enable:
+        - append
+        - assign
+        - branch
+        - decl
+        - defer
+        - err
+        - expr
+        - for
+        - if
+        - inc-dec
+        - go
+        - label
+        - range
+        - return
+        - select
+        - send
+        - switch
+        - type-switch
+        - leading-whitespace
+        - trailing-whitespace
+      # Disable checks.
+      # Will be subtractive to any preset.
+      # https://github.com/bombsimon/wsl/tree/main?tab=readme-ov-file#checks-and-configuration
+      # Default: []
+      disable:
+        - assign-exclusive
+        - assign-expr
+
+  # Defines a set of rules to ignore issues.
+  # It does not skip the analysis, and so does not ignore "typecheck" errors.
+  exclusions:
+    # Mode of the generated files analysis.
+    #
+    # - `strict`: sources are excluded by strictly following the Go generated
+    #    file convention.
+    #    Source files that have lines matching only the following regular
+    #    expression will be excluded: `^// Code generated .* DO NOT EDIT\.$`
+    #    This line must appear before the first non-comment, non-blank text in
+    #    the file.
+    #    https://go.dev/s/generatedcode
+    # - `lax`: sources are excluded if they contain lines like
+    #    `autogenerated file`, `code generated`, `do not edit`, etc.
+    # - `disable`: disable the generated files exclusion.
+    #
+    # Default: strict
+    generated: lax
+    # Predefined exclusion rules.
+    # Default: []
+    # presets:
+      # - comments
+      # - std-error-handling
+      # - common-false-positives
+      # - legacy
+    # Excluding configuration per-path, per-linter, per-text and per-source.
+    rules:
+      - linters:
+          - funlen
+        path: _test\.go
+    # Which file paths to exclude: they will be analyzed, but issues from them won't be reported.
+    # "/" will be replaced by the current OS file path separator to properly work on Windows.
+    # Default: []
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+
+# Options for analysis running.
 run:
-  # default concurrency is a available CPU number
+  # Define the Go version limit.
+  # Default: use Go version from the go.mod file, fallback on the env var
+  # `GOVERSION`, fallback on 1.22.
+  go: "1.24.2"
+  # Number of operating system threads (`GOMAXPROCS`) that can execute
+  # golangci-lint simultaneously.
+  # Default: 0 (automatically set to match Linux container CPU quota and
+  # fall back to the number of logical CPUs in the machine)
   concurrency: 4
-
-  # timeout for analysis, e.g. 30s, 5m, default is 1m
-  timeout: 15m
-
-  # exit code when at least one issue was found, default is 1
-  issues-exit-code: 1
-
-  # include test files or not, default is true
-  tests: true
-
-  # list of build tags, all linters use it. Default is empty list.
-  #build-tags:
-  #  - mytag
-
-  # which dirs to skip: issues from them won't be reported;
-  # can use regexp here: generated.*, regexp is applied on full path;
-  # default value is empty list, but default dirs are skipped independently
-  # from this option's value (see skip-dirs-use-default).
-  # "/" will be replaced by current OS file path separator to properly work
-  # on Windows.
-  skip-dirs:
-    - vendor
-
-  # default is true. Enables skipping of directories:
-  #   vendor$, third_party$, testdata$, examples$, Godeps$, builtin$
-  skip-dirs-use-default: true
-
-  # which files to skip: they will be analyzed, but issues from them
-  # won't be reported. Default value is empty list, but there is
-  # no need to include all autogenerated files, we confidently recognize
-  # autogenerated files. If it's not please let us know.
-  # "/" will be replaced by current OS file path separator to properly work
-  # on Windows.
-  #skip-files:
-  #  - ".*\\.my\\.go$"
-  #  - lib/bad.go
-
-  # by default isn't set. If set we pass it to "go list -mod={option}". From "go help modules":
-  # If invoked with -mod=readonly, the go command is disallowed from the implicit
-  # automatic updating of go.mod described above. Instead, it fails when any changes
-  # to go.mod are needed. This setting is most useful to check that go.mod does
-  # not need updates, such as in a continuous integration and testing system.
+  # If set, we pass it to "go list -mod={option}". From "go help modules":
+  # If invoked with -mod=readonly, the go command is disallowed from the
+  # implicit automatic updating of go.mod described above. Instead, it fails
+  # when any changes to go.mod are needed. This setting is most useful to check
+  # that go.mod does not need updates, such as in a continuous integration and
+  # testing system.
   # If invoked with -mod=vendor, the go command assumes that the vendor
   # directory holds the correct copies of dependencies and ignores
   # the dependency descriptions in go.mod.
-  modules-download-mode: vendor
-
+  #
+  # Allowed values: readonly|vendor|mod
+  # Default: ""
+  modules-download-mode: readonly
+  # Exit code when at least one issue was found.
+  # Default: 1
+  issues-exit-code: 1
+  # Include test files or not.
+  # Default: true
+  tests: true
   # Allow multiple parallel golangci-lint instances running.
-  # If false (default) - golangci-lint acquires file lock on start.
-  allow-parallel-runners: false
+  # If false, golangci-lint acquires file lock on start.
+  # Default: false
+  allow-parallel-runners: true
+  # Allow multiple golangci-lint instances running, but serialize them around
+  # a lock.
+  # If false, golangci-lint exits with an error if it fails to acquire file
+  # lock on start.
+  # Default: false
+  allow-serial-runners: true
+  # Timeout for total work, e.g. 30s, 5m, 5m30s.
+  # If the value is lower or equal to 0, the timeout is disabled.
+  # Default: 0 (disabled)
+  timeout: 0m
+  # The mode used to evaluate relative paths.
+  # It's used by exclusions, Go plugins, and some linters.
+  # The value can be:
+  # - `gomod`: the paths will be relative to the directory of the `go.mod` file.
+  # - `gitroot`: the paths will be relative to the git root (the parent directory of `.git`).
+  # - `cfg`: the paths will be relative to the configuration file.
+  # - `wd` (NOT recommended): the paths will be relative to the place where golangci-lint is run.
+  # Default: cfg
+  relative-path-mode: gomod
 
-
-# output configuration options
+# Output configuration options.
 output:
-  # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
-  format: colored-line-number
-
-  # print lines of code with issue, default is true
-  print-issued-lines: true
-
-  # print linter name in the end of issue text, default is true
-  print-linter-name: true
-
-  # make issues output unique by line, default is true
-  uniq-by-line: true
-
-
-# all available settings of specific linters
-linters-settings:
-  #dogsled:
-    # checks assignments with too many blank identifiers; default is 2
-    #max-blank-identifiers: 2
-  #dupl:
-    # tokens count to trigger issue, 150 by default
-   # threshold: 100
-  errcheck:
-    # report about not checking of errors in type assertions: `a := b.(MyStruct)`;
-    # default is false: such cases aren't reported by default.
-    check-type-assertions: true
-
-    # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
-    # default is false: such cases aren't reported by default.
-    check-blank: true
-
-    # [deprecated] comma-separated list of pairs of the form pkg:regex
-    # the regex is used to ignore names within pkg. (default "fmt:.*").
-    # see https://github.com/kisielk/errcheck#the-deprecated-method for details
-    # ignore: fmt:.*,io:^Read.*,os:^Read.*
-
-    # path to a file containing a list of functions to exclude from checking
-    # see https://github.com/kisielk/errcheck#excluding-functions for details
-    #exclude: /path/to/file.txt
-  #exhaustive:
-    # indicates that switch statements are to be considered exhaustive if a
-    # 'default' case is present, even if all enum members aren't listed in the
-    # switch
-    #default-signifies-exhaustive: false
-  #funlen:
-    #lines: 100
-    #statements: 50
-  #gocognit:
-    # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    #min-complexity: 15
-  #nestif:
-    # minimal complexity of if statements to report, 5 by default
-    #min-complexity: 4
-  goconst:
-    # minimal length of string constant, 3 by default
-    min-len: 3
-    # minimal occurrences count to trigger, 3 by default
-    min-occurrences: 3
-  gocritic:
-    # Which checks should be enabled; can't be combined with 'disabled-checks';
-    # See https://go-critic.github.io/overview#checks-overview
-    # To check which checks are enabled run `GL_DEBUG=gocritic golangci-lint run`
-    # By default list of stable checks is used.
-    #enabled-checks:
-      #- rangeValCopy
-
-    # Which checks should be disabled; can't be combined with 'enabled-checks'; default is empty
-    disabled-checks:
-      - dupImport # https://github.com/go-critic/go-critic/issues/845
-    # Enable multiple checks by tags, run `GL_DEBUG=gocritic golangci-lint run` to see all tags and checks.
-    # Empty list by default. See https://github.com/go-critic/go-critic#usage -> section "Tags".
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-    #disabled-tags:
-      #- experimental
-
-    #settings: # settings passed to gocritic
-        #paramsOnly: true
-      #rangeValCopy:
-        #sizeThreshold: 128
-  #gocyclo:
-    # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    #min-complexity: 15
-  #godot:
-    # check all top-level comments, not only declarations
-    #check-all: false
-  godox:
-    # report any comments starting with keywords, this is useful for TODO or FIXME comments that
-    # might be left in the code accidentally and should be resolved before merging
-    #keywords: # default keywords are TODO, BUG, and FIXME, these can be overwritten by this setting
-      #- TODO # marks hack-arounds that should be removed before merging
-  gofmt:
-    # simplify code: gofmt with `-s` option, true by default
-    simplify: true
-  #goimports:
-    # put imports beginning with prefix after 3rd-party packages;
-    # it's a comma-separated list of prefixes
-    #local-prefixes: dfi/sigex
-  #golint:
-    # minimal confidence for issues, default is 0.8
-    #min-confidence: 0
-  gomnd:
-    settings:
-      mnd:
-        # don't include the "operation" and "assign"
-        checks: argument,case,condition,return
-        ignored-functions: strconv.ParseInt,strconv.FormatInt,os.MkdirAll,os.OpenFile
-  #gomodguard:
-    #allowed:
-      #modules:                                                        # List of allowed modules
-        # - gopkg.in/yaml.v2
-      #domains:                                                        # List of allowed module domains
-        # - golang.org
-    #blocked:
-      #modules:                                                        # List of blocked modules
-        # - github.com/uudashr/go-module:                             # Blocked module
-        #     recommendations:                                        # Recommended modules that should be used instead (Optional)
-        #       - golang.org/x/mod
-        #     reason: "`mod` is the official go.mod parser library."  # Reason why the recommended module should be used (Optional)
-      #versions:                                                       # List of blocked module version constraints
-        # - github.com/mitchellh/go-homedir:                          # Blocked module with version constraint
-        #     version: "< 1.1.0"                                      # Version constraint, see https://github.com/Masterminds/semver#basic-comparisons
-        #     reason: "testing if blocked version constraint works."  # Reason why the version constraint exists. (Optional)
-  govet:
-    # report about shadowed variables
-    check-shadowing: true
-
-    # settings per analyzer
-    settings:
-      printf: # analyzer name, run `go tool vet help` to see all analyzers
-        funcs: # run `go tool vet help printf` to see available settings for `printf` analyzer
-          #- (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
-          - (dfi/sigex/logger).Debugf
-          - (dfi/sigex/logger).Infof
-          - (dfi/sigex/logger).Warnf
-          - (dfi/sigex/logger).Errorf
-          - (dfi/sigex/logger).Logf
-
-    # enable or disable analyzers by name
-    #enable:
-      #- fieldalignment
-      #- atomicalign
-    #enable-all: false
-    #disable:
-      #- shadow
-    #disable-all: false
-  #depguard:
-    #list-type: blacklist
-    #include-go-root: false
-    #packages:
-      #- github.com/sirupsen/logrus
-    #packages-with-error-message:
-      # specify an error message to output when a blacklisted package is used
-      #- github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
-  lll:
-    # max line length, lines longer will be reported. Default is 120.
-    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
-    line-length: 140
-    # tab width in spaces. Default to 1.
-    tab-width: 2
-  # maligned:
-    # print struct with more effective memory layout or not, false by default
-    # suggest-new: true
-  misspell:
-    # Correct spellings using locale preferences for US or UK.
-    # Default is to use a neutral variety of English.
-    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
-    #locale: US
-    #ignore-words:
-      #- someword
-  nakedret:
-    # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
-    max-func-lines: 30
-  #prealloc:
-    # XXX: we don't recommend using this linter before doing performance profiling.
-    # For most programs usage of prealloc will be a premature optimization.
-
-    # Report preallocation suggestions only on simple loops that have no returns/breaks/continues/gotos in them.
-    # True by default.
-    #simple: true
-    #range-loops: true # Report preallocation suggestions on range loops, true by default
-    #for-loops: false # Report preallocation suggestions on for loops, false by default
-  nolintlint:
-    # Enable to ensure that nolint directives are all used. Default is true.
-    allow-unused: false
-    # Disable to ensure that nolint directives don't have a leading space. Default is true.
-    allow-leading-space: false
-    # Exclude following linters from requiring an explanation.  Default is [].
-    allow-no-explanation: []
-    # Enable to require an explanation of nonzero length after each nolint directive. Default is false.
-    require-explanation: true
-    # Enable to require nolint directives to mention the specific linter being suppressed. Default is false.
-    require-specific: true
-  revive:
-    # see https://github.com/mgechev/revive#available-rules for details.
-    ignore-generated-header: false
-    severity: warning
-    confidence: 0.8
-    errorCode: 0
-    warningCode: 0
-    rules:
-      - name: blank-imports
-      - name: context-as-argument
-      - name: context-keys-type
-      - name: dot-imports
-      - name: error-return
-      - name: error-strings
-      - name: error-naming
-      - name: exported
-      - name: if-return
-      - name: increment-decrement
-      - name: var-naming
-      - name: var-declaration
-      - name: package-comments
-      - name: range
-      - name: receiver-naming
-      - name: time-naming
-      - name: unexported-return
-      - name: indent-error-flow
-      - name: errorf
-      - name: empty-block
-      - name: superfluous-else
-      - name: unused-parameter
-      - name: unreachable-code
-      - name: redefines-builtin-id
-      #- name: indent-error-flow
-        #severity: warning
-      #- name: add-constant
-        #severity: warning
-        #arguments:
-          #- maxLitCount: "3"
-            #allowStrs: '""'
-            #allowInts: "0,1,2"
-            #allowFloats: "0.0,0.,1.0,1.,2.0,2."
-  rowserrcheck:
-    packages:
-      - github.com/jmoiron/sqlx
-  #testpackage:
-    # regexp pattern to skip files
-    #skip-regexp: (export|internal)_test\.go
-  unparam:
-    # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
-    # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
-    # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
-    # with golangci-lint call it on a directory with the changed file.
-    #check-exported: false
-  #unused:
-    # treat code as a program (not a library) and report unused exported identifiers; default is false.
-    # XXX: if you enable this setting, unused will report a lot of false-positives in text editors:
-    # if it's called for subdir of a project it can't find funcs usages. All text editor integrations
-    # with golangci-lint call it on a directory with the changed file.
-    #check-exported: false
-  #whitespace:
-    #multi-if: false   # Enforces newlines (or comments) after every multi-line if statement
-    #multi-func: false # Enforces newlines (or comments) after every multi-line function signature
-  #wsl:
-    # If true append is only allowed to be cuddled if appending value is
-    # matching variables, fields or types on line above. Default is true.
-    #strict-append: true
-    # Allow calls and assignments to be cuddled as long as the lines have any
-    # matching variables, fields or types. Default is true.
-    #allow-assign-and-call: true
-    # Allow multiline assignments to be cuddled. Default is true.
-    #allow-multiline-assign: true
-    # Allow declarations (var) to be cuddled.
-    #allow-cuddle-declarations: false
-    # Allow trailing comments in ending of blocks
-    #allow-trailing-comment: false
-    # Force newlines in end of case at this limit (0 = never).
-    #force-case-trailing-whitespace: 0
-    # Force cuddling of err checks with err var assignment
-    #force-err-cuddling: false
-    # Allow leading comments to be separated with empty liens
-    #allow-separated-leading-comment: false
-
-  # The custom section can be used to define linter plugins to be loaded at runtime. See README doc
-  #  for more info.
-  #custom:
-    # Each custom linter should have a unique name.
-     #example:
-      # The path to the plugin *.so. Can be absolute or local. Required for each custom linter
-      #path: /path/to/example.so
-      # The description of the linter. Optional, just for documentation purposes.
-      #description: This is an example usage of a plugin linter.
-      # Intended to point to the repo location of the linter. Optional, just for documentation purposes.
-      #original-url: github.com/golangci/example-linter
-
-linters:
-  enable:
-    - govet
-    - errcheck
-    - staticcheck
-    - structcheck
-    - typecheck
-    - varcheck
-    - ineffassign
-    - gosimple
-    - deadcode
-    - unused
-
-    - nolintlint
-    - gofmt
-    - gocritic
-    - goimports
-    - rowserrcheck
-    - unparam
-    - unconvert
-    - gosec
-    - revive
-
-    - godox
-    - gomnd
-    - asciicheck
-    - misspell
-    - nakedret
-    #- lll
-    #- goconst
-    #- stylecheck
-    #- gocyclo
-    #- funlen
-
-    #- dupl
-    #- whitespace
-
-    #- wsl
-    #- bodyclose # working bad with defer + error check
-    #- scopelint # enable later and use exportloopref
-
-#  disable:
-#    - maligned
-#    - prealloc
-  disable-all: true
-#  presets:
-#    - bugs
-#    - unused
-  fast: false
-
+  # The formats used to render issues.
+  formats:
+    # Prints issues in a text format with colors, line number, and linter name.
+    # This format is the default format.
+    text:
+      # Output path can be either `stdout`, `stderr` or path to the file to
+      # write to.
+      # Default: stdout
+      path: stdout
+      # Print linter name in the end of issue text.
+      # Default: true
+      print-linter-name: true
+      # Print lines of code with issue.
+      # Default: true
+      print-issued-lines: true
+      # Use colors.
+      # Default: true
+      colors: true
+  # Order to use when sorting results.
+  # Possible values: `file`, `linter`, and `severity`.
+  #
+  # If the severity values are inside the following list, they are ordered in this order:
+  #   1. error
+  #   2. warning
+  #   3. high
+  #   4. medium
+  #   5. low
+  # Either they are sorted alphabetically.
+  #
+  # Default: ["linter", "file"]
+  sort-order:
+    - file
+    - severity
+    - linter
+  # Add a prefix to the output file references.
+  # This option is ignored when using `output.path-mode: abs` mode.
+  # Default: ""
+  path-prefix: ""
 
 issues:
-  # List of regexps of issue texts to exclude, empty list by default.
-  # But independently from this option we use default exclude patterns,
-  # it can be disabled by `exclude-use-default: false`. To list all
-  # excluded by default patterns execute `golangci-lint run --help`
-  #exclude:
-    #- abcdef
-
-  # Excluding configuration per-path, per-linter, per-text and per-source
-  exclude-rules:
-    # Exclude some linters from running on tests files.
-    - path: _test\.go
-      linters:
-        - funlen # often test files  holds test data inside function
-        #- lll
-        #- errcheck
-        #- dupl
-        #- gosec
-
-    # Exclude known linters from partially hard-vendored code,
-    # which is impossible to exclude via "nolint" comments.
-    #- path: internal/hmac/
-      #text: "weak cryptographic primitive"
-      #linters:
-        #- gosec
-
-    # Exclude linter specific messages
-    #- linters:
-        #- staticcheck
-      #text: "SA9003:"
-
-    # Exclude golint package comments
-    #- linters:
-        #- golint
-      #text: "should have a package comment"
-
-    # Exclude lll issues for long lines with go:generate
-    #- linters:
-        #- lll
-      #source: "^//go:generate "
-
-  # Independently from option `exclude` we use default exclude patterns,
-  # it can be disabled by this option. To list all
-  # excluded by default patterns execute `golangci-lint run --help`.
-  # Default value for this option is true.
-  exclude-use-default: false
-
-  # The default value is false. If set to true exclude and exclude-rules
-  # regular expressions become case sensitive.
-  exclude-case-sensitive: false
-
-  # The list of ids of default excludes to include or disable. By default it's empty.
-  #include:
-    #- EXC0002 # disable excluding of issues about comments from golint
-
-  # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
+  # Maximum issues count per one linter.
+  # Set to 0 to disable.
+  # Default: 50
   max-issues-per-linter: 15
-
-  # Maximum count of issues with the same text. Set to 0 to disable. Default is 3.
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
   max-same-issues: 0
-
-  # Show only new issues: if there are unstaged changes or untracked files,
-  # only those changes are analyzed, else only changes in HEAD~ are analyzed.
-  # It's a super-useful option for integration of golangci-lint into existing
-  # large codebase. It's not practical to fix all existing issues at the moment
-  # of integration: much better don't allow issues in new code.
-  # Default is false.
-  new: false
-
-  # Show only new issues created after git revision `REV`
-  #new-from-rev: REV
-
-  # Show only new issues created in git patch with set file path.
-  #new-from-patch: path/to/patch/file
+  # Make issues output unique by line.
+  # Default: true
+  uniq-by-line: true
 
 severity:
-  # Default value is empty string.
-  # Set the default severity for issues. If severity rules are defined and the issues
-  # do not match or no severity is provided to the rule this will be the default
-  # severity applied. Severities should match the supported severity names of the
-  # selected out format.
-  # - Code climate: https://docs.codeclimate.com/docs/issues#issue-severity
-  # -   Checkstyle: https://checkstyle.sourceforge.io/property_types.html#severity
-  # -       Github: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
-  default-severity: error
+  # Set the default severity for issues.
+  # Default: ""
+  default: error
 
-  # The default value is false.
-  # If set to true severity-rules regular expressions become case sensitive.
-  case-sensitive: false
-
-  # Default value is empty list.
-  # When a list of severity rules are provided, severity information will be added to lint
-  # issues. Severity rules have the same filtering capability as exclude rules except you
-  # are allowed to specify one matcher per severity rule.
-  # Only affects out formats that support setting severity information.
-  #rules:
-    #- linters:
-      #- dupl
-      #severity: info
+formatters:
+  # Enable specific formatter.
+  # Default: [] (uses standard Go formatting)
+  enable:
+    - gofmt
+  # Formatters settings.
+  settings:
+    gofmt:
+      # Simplify code: gofmt with `-s` option.
+      simplify: true
+  exclusions:
+    # Mode of the generated files analysis.
+    #
+    # - `strict`: sources are excluded by strictly following the Go generated
+    #    file convention.
+    #    Source files that have lines matching only the following regular
+    #    expression will be excluded: `^// Code generated .* DO NOT EDIT\.$`
+    #    This line must appear before the first non-comment, non-blank text in
+    #     the file.
+    #    https://go.dev/s/generatedcode
+    # - `lax`: sources are excluded if they contain lines like
+    #    `autogenerated file`, `code generated`, `do not edit`, etc.
+    # - `disable`: disable the generated files exclusion.
+    #
+    # Default: lax
+    generated: lax
+    # Which file paths to exclude.
+    # Default: []
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
