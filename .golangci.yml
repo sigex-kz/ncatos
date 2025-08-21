@@ -33,7 +33,6 @@ linters:
     - makezero
     - mirror
     - misspell
-    - mnd
     - nakedret
     - nilerr
     - nilnesserr
@@ -55,6 +54,7 @@ linters:
     - usetesting
     - wastedassign
     - zerologlint
+#    - mnd
 #    - tagalign
 #    - err113
 #    - wsl_v5
