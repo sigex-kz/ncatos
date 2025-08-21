@@ -37,9 +37,10 @@ func startMetricsServer() (stopFunc func(time.Duration), failureChannel <-chan e
 
 	// создаем экземпляр сервера
 	srv := &http.Server{
-		Addr:         getAppContext().Config.Metrics.Address,
-		Handler:      mux,
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
+		Addr:              getAppContext().Config.Metrics.Address,
+		Handler:           mux,
+		TLSNextProto:      make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
+		ReadHeaderTimeout: time.Second * 3,
 	}
 
 	stopFunc = func(shutdownTimeout time.Duration) {

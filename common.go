@@ -39,7 +39,7 @@ const (
 
 // waitForTimeout сервисная функция, позволяющая дождаться таймаута или отмены контекста
 func waitForTimeout(ctx context.Context, timeout time.Duration) {
-	if ctx.Err() != nil || timeout == 0 {
+	if timeout == 0 || ctx.Err() != nil {
 		return
 	}
 	tm := time.NewTimer(timeout)
@@ -83,16 +83,16 @@ func oidToAsn(oid string) (asn1.ObjectIdentifier, error) {
 	}
 
 	// пытаемся сконвертировать строквые представления элементов OID-а в числа
-	intIds := make([]int, len(ids))
+	intIDs := make([]int, len(ids))
 	var convertError error
 	for i, v := range ids {
-		if intIds[i], convertError = strconv.Atoi(v); convertError != nil {
+		if intIDs[i], convertError = strconv.Atoi(v); convertError != nil {
 			return asn1.ObjectIdentifier{}, fmt.Errorf("failed to convert OID part: [%d], [%s], [%w]", i, v, convertError)
 		}
 	}
 
 	// возвращаем сформированный OID
-	return asn1.ObjectIdentifier(intIds), nil
+	return asn1.ObjectIdentifier(intIDs), nil
 }
 
 // loadCertificate позволяет загрузить и разобрать сертификат.

@@ -20,28 +20,29 @@ var (
 
 // ocspRequest определяет структуру OCSP запроса.
 //
-// OCSPRequest     ::=     SEQUENCE {
-//   tbsRequest                  TBSRequest,
-//   optionalSignature   [0]     EXPLICIT Signature OPTIONAL }
+//	OCSPRequest     ::=     SEQUENCE {
+//	  tbsRequest                  TBSRequest,
+//	  optionalSignature   [0]     EXPLICIT Signature OPTIONAL }
 type ocspRequest struct {
 	TBSRequest ocspTBSRequest
 	Signature  asn1.RawValue `asn1:"explicit,tag:0,optional"`
 }
 
 // ocspResponse определяет структуру OCSP ответа.
-//  OCSPResponse ::= SEQUENCE {
-//    responseStatus         OCSPResponseStatus,
-//    responseBytes          [0] EXPLICIT ResponseBytes OPTIONAL }
 //
-//  OCSPResponseStatus ::= ENUMERATED {
-//    successful            (0),  -- Response has valid confirmations
-//    malformedRequest      (1),  -- Illegal confirmation request
-//    internalError         (2),  -- Internal error in issuer
-//    tryLater              (3),  -- Try again later
-//    -- (4) is not used
-//    sigRequired           (5),  -- Must sign the request
-//    unauthorized          (6)   -- Request unauthorized
-//  }
+//	OCSPResponse ::= SEQUENCE {
+//	  responseStatus         OCSPResponseStatus,
+//	  responseBytes          [0] EXPLICIT ResponseBytes OPTIONAL }
+//
+//	OCSPResponseStatus ::= ENUMERATED {
+//	  successful            (0),  -- Response has valid confirmations
+//	  malformedRequest      (1),  -- Illegal confirmation request
+//	  internalError         (2),  -- Internal error in issuer
+//	  tryLater              (3),  -- Try again later
+//	  -- (4) is not used
+//	  sigRequired           (5),  -- Must sign the request
+//	  unauthorized          (6)   -- Request unauthorized
+//	}
 type ocspResponse struct {
 	ResponseStatus asn1.Enumerated
 	ResponseBytes  ocspResponseBytes `asn1:"explicit,tag:0,optional"`
@@ -49,11 +50,11 @@ type ocspResponse struct {
 
 // ocspTBSRequest определяет опционально подписываемое тело OCSP запроса.
 //
-// TBSRequest      ::=     SEQUENCE {
-//   version             [0]     EXPLICIT Version DEFAULT v1,
-//   requestorName       [1]     EXPLICIT GeneralName OPTIONAL,
-//   requestList                 SEQUENCE OF Request,
-//   requestExtensions   [2]     EXPLICIT Extensions OPTIONAL }
+//	TBSRequest      ::=     SEQUENCE {
+//	  version             [0]     EXPLICIT Version DEFAULT v1,
+//	  requestorName       [1]     EXPLICIT GeneralName OPTIONAL,
+//	  requestList                 SEQUENCE OF Request,
+//	  requestExtensions   [2]     EXPLICIT Extensions OPTIONAL }
 type ocspTBSRequest struct {
 	Version           int           `asn1:"default:0,explicit,tag:0,optional"`
 	RequestorName     asn1.RawValue `asn1:"explicit,tag:1,optional"`
@@ -63,9 +64,9 @@ type ocspTBSRequest struct {
 
 // ocspSingleRequest запрос о статусе одного сертификата с указанным CertID.
 //
-// Request         ::=     SEQUENCE {
-//   reqCert                     CertID,
-//   singleRequestExtensions     [0] EXPLICIT Extensions OPTIONAL }
+//	Request         ::=     SEQUENCE {
+//	  reqCert                     CertID,
+//	  singleRequestExtensions     [0] EXPLICIT Extensions OPTIONAL }
 type ocspSingleRequest struct {
 	ReqCert                 ocspCertID
 	SingleRequestExtensions []pkix.Extension `asn1:"explicit,tag:0,optional"`
@@ -73,11 +74,11 @@ type ocspSingleRequest struct {
 
 // ocspCertID определяет сертификат статус которого получаем с помощью OCSP.
 //
-// CertID          ::=     SEQUENCE {
-//   hashAlgorithm       AlgorithmIdentifier,
-//   issuerNameHash      OCTET STRING, -- Hash of issuer's DN
-//   issuerKeyHash       OCTET STRING, -- Hash of issuer's public key
-//   serialNumber        CertificateSerialNumber }
+//	CertID          ::=     SEQUENCE {
+//	  hashAlgorithm       AlgorithmIdentifier,
+//	  issuerNameHash      OCTET STRING, -- Hash of issuer's DN
+//	  issuerKeyHash       OCTET STRING, -- Hash of issuer's public key
+//	  serialNumber        CertificateSerialNumber }
 type ocspCertID struct {
 	Raw           asn1.RawContent
 	HashAlgorithm pkix.AlgorithmIdentifier

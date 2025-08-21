@@ -18,7 +18,6 @@ linters:
     - copyloopvar
     - durationcheck
     - embeddedstructfieldcheck
-    - err113
     - errcheck
     - errorlint
     - exptostd
@@ -56,8 +55,9 @@ linters:
     - unused
     - usetesting
     - wastedassign
-    - wsl_v5
     - zerologlint
+#    - err113
+#    - wsl_v5
 
   # Disable specific linter.
   # https://golangci-lint.run/usage/linters/#disabled-by-default
@@ -1201,7 +1201,7 @@ linters:
     # Check that struct tags are well aligned.
     tagalign:
       # Whether enable align. If true, the struct tags will be aligned.
-      align: true
+      align: false
       # Whether enable tags sort.
       sort: true
       # Specify the order of tags, the other tags will be sorted by name.

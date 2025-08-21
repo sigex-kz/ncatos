@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
@@ -48,7 +49,7 @@ func buildConfig() (*appConfig, error) {
 		}
 
 		configHashBytes := sha256.Sum256(jcEncoded)
-		ConfigHash = fmt.Sprintf("%x", configHashBytes)
+		ConfigHash = hex.EncodeToString(configHashBytes[:])
 	}
 
 	// установим параметры по умолчанию
