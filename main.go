@@ -184,7 +184,7 @@ func main() {
 			exitCtxCancel()
 			exitCode = 0
 		}
-		if (ocspChannel == nil && tspChannel == nil && httpChannel == nil) || (exitCtx.Err() != nil || stopError != nil) {
+		if (ocspChannel == nil && tspChannel == nil && httpChannel == nil) || (stopError != nil || exitCtx.Err() != nil) {
 			break
 		}
 	}

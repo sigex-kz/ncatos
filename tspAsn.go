@@ -26,13 +26,13 @@ const (
 
 // tspRequest определяет структуру TSP запроса.
 //
-// TimeStampReq ::= SEQUENCE {
-//   version INTEGER  { v1(1) },
-//   messageImprint MessageImprint,
-//   reqPolicy TSAPolicyId OPTIONAL,
-//   nonce INTEGER OPTIONAL,
-//   certReq BOOLEAN DEFAULT FALSE,
-//   extensions [0] IMPLICIT Extensions OPTIONAL }
+//	TimeStampReq ::= SEQUENCE {
+//	  version INTEGER  { v1(1) },
+//	  messageImprint MessageImprint,
+//	  reqPolicy TSAPolicyId OPTIONAL,
+//	  nonce INTEGER OPTIONAL,
+//	  certReq BOOLEAN DEFAULT FALSE,
+//	  extensions [0] IMPLICIT Extensions OPTIONAL }
 //
 // TSAPolicyId ::= OBJECT IDENTIFIER
 type tspRequest struct {
@@ -47,9 +47,10 @@ type tspRequest struct {
 // tspResp определяет структуру ответа TSA.
 //
 // При получении успешного ответа timeStampToken - это подписанный CMS (CMS Signed) - см. https://tools.ietf.org/html/rfc5652
-//  TimeStampResp ::= SEQUENCE  {
-//    status PKIStatusInfo,
-//    timeStampToken TimeStampToken OPTIONAL  }
+//
+//	TimeStampResp ::= SEQUENCE  {
+//	  status PKIStatusInfo,
+//	  timeStampToken TimeStampToken OPTIONAL  }
 type tspResp struct {
 	Status         tspPKIStatusInfo
 	TimeStampToken cmsEncapsulatedContentInfoSigned `asn1:"optional,omitempty"`
@@ -57,10 +58,10 @@ type tspResp struct {
 
 // tspMessageImprint определяет алгоритм хеширования и хеш данных на которые создается метка времени.
 //
-//  MessageImprint ::= SEQUENCE  {
-//    hashAlgorithm                AlgorithmIdentifier,
-//    hashedMessage                OCTET STRING
-//  }
+//	MessageImprint ::= SEQUENCE  {
+//	  hashAlgorithm                AlgorithmIdentifier,
+//	  hashedMessage                OCTET STRING
+//	}
 type tspMessageImprint struct {
 	Raw           asn1.RawContent
 	HashAlgorithm pkix.AlgorithmIdentifier
@@ -69,12 +70,12 @@ type tspMessageImprint struct {
 
 // tspPKIStatusInfo определяет структуру со статусом ответа от TSA.
 //
-// PKIStatusInfo ::= SEQUENCE {
-//   	status        PKIStatus,
-// 	  statusString  PKIFreeText     OPTIONAL,
-//   	failInfo      PKIFailureInfo  OPTIONAL  }
+//	PKIStatusInfo ::= SEQUENCE {
+//	  	status        PKIStatus,
+//		  statusString  PKIFreeText     OPTIONAL,
+//	  	failInfo      PKIFailureInfo  OPTIONAL  }
 //
-//   PKIStatus ::= INTEGER
+//	  PKIStatus ::= INTEGER
 type tspPKIStatusInfo struct {
 	Status       int
 	StatusString []asn1.RawValue `asn1:"optional,omitempty"`
@@ -83,20 +84,20 @@ type tspPKIStatusInfo struct {
 
 // cmsSignedData определяет структуру CMS с подписью.
 //
-//  SignedData ::= SEQUENCE {
-//    version CMSVersion,
-//    digestAlgorithms DigestAlgorithmIdentifiers,
-//    encapContentInfo EncapsulatedContentInfo,
-//    certificates [0] IMPLICIT CertificateSet OPTIONAL,
-//    crls [1] IMPLICIT RevocationInfoChoices OPTIONAL,
-//    signerInfos SignerInfos }
+//	SignedData ::= SEQUENCE {
+//	  version CMSVersion,
+//	  digestAlgorithms DigestAlgorithmIdentifiers,
+//	  encapContentInfo EncapsulatedContentInfo,
+//	  certificates [0] IMPLICIT CertificateSet OPTIONAL,
+//	  crls [1] IMPLICIT RevocationInfoChoices OPTIONAL,
+//	  signerInfos SignerInfos }
 //
-//  DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
+//	DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
 //
-//  SignerInfos ::= SET OF SignerInfo
+//	SignerInfos ::= SET OF SignerInfo
 //
-//  CertificateSet ::= SET OF CertificateChoices
-//  RevocationInfoChoices ::= SET OF RevocationInfoChoice
+//	CertificateSet ::= SET OF CertificateChoices
+//	RevocationInfoChoices ::= SET OF RevocationInfoChoice
 type cmsSignedData struct {
 	Version          int
 	DigestAlgorithms []pkix.AlgorithmIdentifier `asn1:"set"`
@@ -108,14 +109,14 @@ type cmsSignedData struct {
 
 // cmsSignerInfo определяет структуру одной подписи в CMS.
 //
-//  SignerInfo ::= SEQUENCE {
-//    version CMSVersion,
-//    sid SignerIdentifier,
-//    digestAlgorithm DigestAlgorithmIdentifier,
-//    signedAttrs [0] IMPLICIT SignedAttributes OPTIONAL,
-//    signatureAlgorithm SignatureAlgorithmIdentifier,
-//    signature SignatureValue,
-//    unsignedAttrs [1] IMPLICIT UnsignedAttributes OPTIONAL }
+//	SignerInfo ::= SEQUENCE {
+//	  version CMSVersion,
+//	  sid SignerIdentifier,
+//	  digestAlgorithm DigestAlgorithmIdentifier,
+//	  signedAttrs [0] IMPLICIT SignedAttributes OPTIONAL,
+//	  signatureAlgorithm SignatureAlgorithmIdentifier,
+//	  signature SignatureValue,
+//	  unsignedAttrs [1] IMPLICIT UnsignedAttributes OPTIONAL }
 type cmsSignerInfo struct {
 	Version             int
 	RawSignerIdentifier asn1.RawValue
@@ -134,11 +135,11 @@ type cmsEncapsulatedContentInfoSigned struct {
 
 // cmsEncapsulatedContentInfo определяет структуру вложенных в CMS данных.
 //
-//  EncapsulatedContentInfo ::= SEQUENCE {
-//    eContentType ContentType,
-//    eContent [0] EXPLICIT OCTET STRING OPTIONAL }
+//	EncapsulatedContentInfo ::= SEQUENCE {
+//	  eContentType ContentType,
+//	  eContent [0] EXPLICIT OCTET STRING OPTIONAL }
 //
-//  ContentType ::= OBJECT IDENTIFIER
+//	ContentType ::= OBJECT IDENTIFIER
 type cmsEncapsulatedContentInfo struct {
 	EContentType asn1.ObjectIdentifier
 	EContent     []byte `asn1:"optional,omitempty,explicit,tag:0"`
@@ -147,11 +148,11 @@ type cmsEncapsulatedContentInfo struct {
 // tspAccuracy опциональное поле, которое определяют точность времени указанного
 // в поле генерации даты метки (asnTSPTstInfo.genTime).
 //
-//  Accuracy ::= SEQUENCE {
-//    seconds        INTEGER              OPTIONAL,
-//    millis     [0] INTEGER  (1..999)    OPTIONAL,
-//    micros     [1] INTEGER  (1..999)    OPTIONAL
-//  }
+//	Accuracy ::= SEQUENCE {
+//	  seconds        INTEGER              OPTIONAL,
+//	  millis     [0] INTEGER  (1..999)    OPTIONAL,
+//	  micros     [1] INTEGER  (1..999)    OPTIONAL
+//	}
 type tspAccuracy struct {
 	Seconds int `asn1:"optional"`
 	Millis  int `asn1:"optional,tag:0"`
@@ -160,18 +161,18 @@ type tspAccuracy struct {
 
 // tspTSTInfo представляет собой собственно метку времени, подписанную TSA.
 //
-//  TSTInfo ::= SEQUENCE  {
-//    version                      INTEGER  { v1(1) },
-//    policy                       TSAPolicyId,
-//    messageImprint               MessageImprint,
-//    serialNumber                 INTEGER,
-//    genTime                      GeneralizedTime,
-//    accuracy                     Accuracy                 OPTIONAL,
-//    ordering                     BOOLEAN             DEFAULT FALSE,
-//    nonce                        INTEGER                  OPTIONAL,
-//    tsa                          [0] GeneralName          OPTIONAL,
-//    extensions                   [1] IMPLICIT Extensions   OPTIONAL
-//  }
+//	TSTInfo ::= SEQUENCE  {
+//	  version                      INTEGER  { v1(1) },
+//	  policy                       TSAPolicyId,
+//	  messageImprint               MessageImprint,
+//	  serialNumber                 INTEGER,
+//	  genTime                      GeneralizedTime,
+//	  accuracy                     Accuracy                 OPTIONAL,
+//	  ordering                     BOOLEAN             DEFAULT FALSE,
+//	  nonce                        INTEGER                  OPTIONAL,
+//	  tsa                          [0] GeneralName          OPTIONAL,
+//	  extensions                   [1] IMPLICIT Extensions   OPTIONAL
+//	}
 type tspTSTInfo struct {
 	Version        int `asn1:"default:1"`
 	Policy         asn1.ObjectIdentifier

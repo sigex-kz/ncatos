@@ -48,7 +48,6 @@ linters:
     - revive
     - rowserrcheck
     - staticcheck
-    - tagalign
     - thelper
     - unconvert
     - unparam
@@ -56,6 +55,7 @@ linters:
     - usetesting
     - wastedassign
     - zerologlint
+#    - tagalign
 #    - err113
 #    - wsl_v5
 
@@ -1201,7 +1201,7 @@ linters:
     # Check that struct tags are well aligned.
     tagalign:
       # Whether enable align. If true, the struct tags will be aligned.
-      align: false
+      align: true
       # Whether enable tags sort.
       sort: true
       # Specify the order of tags, the other tags will be sorted by name.
